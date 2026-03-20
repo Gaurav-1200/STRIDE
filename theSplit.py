@@ -9,10 +9,16 @@ import argparse
 
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
-def getLayerSplit(numOfLayers):
+def getLayerSplit(numOfLayers, numOfHosts):
     print(numOfLayers)
-    return [(0,numOfLayers//2),(numOfLayers//2,numOfLayers)]
-    # return [(0,numOfLayers+1),(numOfLayers+1,numOfLayers+1) ]
+    start = 0
+    splits = []
+    incement = numOfLayers//numOfHosts
+    for i in range(numOfHosts):
+        endPos = start + incement
+        splits.append((start, min(endPos, numOfLayers)))
+        start = endPos+1
+    return splits
 
 class OtherPlace:
     def __init__(self, modelID, splitPosStart, splitPosEnd, url):
@@ -71,13 +77,15 @@ class MemoryTracker:
         return summary
 
 
-def run(prompt):
+def run(prompt, hosts):
     modelID = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
     model = TinyLlama(device)
-    cloudURL = "http://127.0.0.1:8000"
-    layerSplit = getLayerSplit(model.layerCount)
-    print(model.modelID)
-    cloud = OtherPlace(model.modelID, layerSplit[1][0], layerSplit[1][1], cloudURL)
+    layerSplit = getLayerSplit(model.layerCount, len(hosts)+1)
+    cloud = None
+    if len(hosts) == 1:
+        cloudURL = "http://127.0.0.1:8000"
+        cloudURL = hosts[0]
+        cloud = OtherPlace(model.modelID, layerSplit[1][0], layerSplit[1][1], cloudURL)
     model.loadModel(True, True, *layerSplit[0])
     text = "Hello"
     text = f"<|system|>\nYou are a helpful assistant.<|user|>\n{prompt}<|assistant|>\n"
@@ -104,7 +112,8 @@ def run(prompt):
             position_ids=position_ids,position_embeddings=position_embeddings,
             use_cache=False)
                 hiddenStates = outputs
-            hiddenStates = cloud.process(hiddenStates)
+            if cloud!=None:
+                hiddenStates = cloud.process(hiddenStates)
             hiddenStates = model.getFinalHiddenStates(hiddenStates)
             logits = model.model.lm_head(hiddenStates)
             output = torch.argmax(logits[:, -1, :], dim=-1).unsqueeze(0)
@@ -116,6 +125,8 @@ def run(prompt):
 if __name__=="__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--prompt", type=str, default="Where is Delhi")
-    print(run(parser.parse_args().prompt))
+    parser.add_argument('--hosts', nargs='+', type=str, default="")
+    parsedValues = parser.parse_args()
+    print(run(parsedValues.prompt, parsedValues.hosts))
     gc.collect()
     torch.cuda.empty_cache()
