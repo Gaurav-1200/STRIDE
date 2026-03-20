@@ -14,7 +14,7 @@ class EmptyLayer(nn.Module):
 class Model:
     def __init__(self, modelID, prefDevice):
         self.modelID = modelID
-        self.device = "cuda:0" if prefDevice=="cuda" and torch.cuda.is_available() else "cpu"
+        self.device = prefDevice if "cuda" in prefDevice and torch.cuda.is_available() else "cpu"
         self.tokenizer = AutoTokenizer.from_pretrained(modelID)
         self.config = AutoConfig.from_pretrained(modelID)
         with init_empty_weights():

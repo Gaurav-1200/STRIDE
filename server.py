@@ -51,10 +51,12 @@ async def setUp(request: SetUp):
     modelID = request.modelID
     splitPosStart = request.splitPosStart
     splitPosEnd = request.splitPosEnd
-    model = ModelsDict[modelID]("cpu")
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    device = "cpu"
+    model = ModelsDict[modelID](device)
     model.loadModel(False, False, splitPosStart, splitPosEnd)
     Constants["model"] = model
-    # Constants["splitPos"] = (splitPosStart, splitPosEnd)
+    Constants["device"] = device
     return {
         "status": True
     }
@@ -69,13 +71,15 @@ async def process(request: Request, backgroundTasks: BackgroundTasks):
     hiddenStateFromLocal = torch.load(bufferIn)
     hiddenStates = hiddenStateFromLocal
     seq_len = hiddenStates.shape[1] 
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    device = "cpu"
+    device = Constants["device"]
+    hiddenStates = hiddenStates.to(device)
+    # device = "cpu"
     # 1. Regenerate Position IDs locally on the cloud GPU
     position_ids = torch.arange(0, seq_len, dtype=torch.long, device=device).unsqueeze(0)
-    position_embeddings = model.model.model.rotary_emb(hiddenStates, position_ids)
+    position_embeddings = model.model.model.rotary_emb(hiddenStates, position_ids.to(device))
     attention_mask = torch.tril(torch.ones((1, 1, seq_len, seq_len),device=device))
     attention_mask = (1.0 - attention_mask) * torch.finfo(hiddenStates.dtype).min
+    attention_mask = attention_mask.to(hiddenStates.dtype)
     with torch.no_grad():
         for layer in modelLayersOnCloud:
             hiddenStates = layer(hiddenStates,attention_mask=attention_mask, position_ids=position_ids,position_embeddings=position_embeddings)
