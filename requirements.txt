@@ -1,0 +1,4 @@
+fastapi[standard]
+torch==2.8.0
+transformers==5.1.0
+accelerate==1.13.0
