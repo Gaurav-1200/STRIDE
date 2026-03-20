@@ -4,6 +4,8 @@ import torch.nn as nn
 from accelerate import init_empty_weights, load_checkpoint_and_dispatch, infer_auto_device_map
 from huggingface_hub import snapshot_download
 import os
+from safetensors import safe_open
+from transformers.models.llama.modeling_llama import LlamaRotaryEmbedding
 
 class EmptyLayer(nn.Module):
     def forward(self, *args, **kwargs):
@@ -12,7 +14,7 @@ class EmptyLayer(nn.Module):
 class Model:
     def __init__(self, modelID, prefDevice):
         self.modelID = modelID
-        self.device = "cuda" if prefDevice=="cuda" and torch.cuda.is_available() else "cpu"
+        self.device = "cuda:0" if prefDevice=="cuda" and torch.cuda.is_available() else "cpu"
         self.tokenizer = AutoTokenizer.from_pretrained(modelID)
         self.config = AutoConfig.from_pretrained(modelID)
         with init_empty_weights():
@@ -20,7 +22,7 @@ class Model:
         self.layerCount = self.config.num_hidden_layers
         self.weightsPath = self.downloadModel()
     
-    def loadModel(self, isFirst, isLast, startPos, endPos):
+    def loadModelOld(self, isFirst, isLast, startPos, endPos):
         self.layers = self.getLayerList(startPos, endPos)
         deviceMap = infer_auto_device_map(self.model)
         if self.device == 'cpu':
@@ -47,11 +49,10 @@ class Model:
         # if "model.rotary_emb" in baseMap:
         #     deviceMap["model.rotary_emb"] = self.device
         self.model = load_checkpoint_and_dispatch(self.model, checkpoint=self.weightsPath, offload_folder="offload", device_map=deviceMap)
-        print(self.model.hf_device_map)
-        
+    
 
     def downloadModel(self):
-        access_token = "" # Add Access token here
+        access_token = ""
         return snapshot_download(repo_id=self.modelID, token=access_token)
 
     def getLayerList(self, startPos, endPos):
@@ -99,6 +100,40 @@ class TinyLlama(Model):
     def getInitialHiddenState(self, inputIDs):
         hiddenStates = self.model.model.embed_tokens(inputIDs)
         return hiddenStates
+
+    def materializeRotaryEmbeddings(self):
+        if hasattr(self.model.model, "rotary_emb"):
+            dim = self.config.hidden_size // self.config.num_attention_heads
+            # Llama's exact math formula for inv_freq
+            # self.model.model.rotary_emb.inv_freq = 1.0 / (
+            #     10000.0 ** (torch.arange(0, dim, 2, dtype=torch.float32) / dim)
+            # ).to(self.device)
+            if not hasattr(self.config, "rope_theta"):
+                self.config.rope_theta = 10000.0
+            self.model.model.rotary_emb = LlamaRotaryEmbedding(
+                config=self.config,
+                device=self.device,
+            )
+    
+    def loadModel(self, isFirst, isLast, startPos, endPos):
+        self.model.model.layers = nn.ModuleList(self.model.model.layers[startPos:endPos])
+        self.layers = self.model.model.layers
+        self.model.to_empty(device=self.device)
+        self.materializeRotaryEmbeddings()
+        stateDict = self.model.state_dict()
+        with safe_open(os.path.join(self.weightsPath, "model.safetensors"), framework="pt", device="cpu") as file:
+            for key in file.keys():
+                if "model.layers." in key:
+                    layerIdx = int(key.split(".")[2])
+                    if startPos <= layerIdx < endPos:
+                        localLayerIdx = layerIdx-startPos
+                        newKey = key.replace(f"layers.{layerIdx}", f"layers.{localLayerIdx}")
+                        if newKey in stateDict:
+                            stateDict[newKey].copy_(file.get_tensor(key).to(self.device, non_blocking=True))
+                elif "embed_tokens" in key or "lm_head" in key or "model.norm" in key:
+                    if key in stateDict:
+                        stateDict[key].copy_(file.get_tensor(key).to(self.device, non_blocking=True))
+
 
     def forward(self):
         pass

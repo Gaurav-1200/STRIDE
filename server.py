@@ -1,6 +1,6 @@
 import torch
 import pickle
-from fastapi import FastAPI, Request, Response
+from fastapi import FastAPI, Request, Response, BackgroundTasks
 from Models import GPT2, TinyLlama
 from pydantic import BaseModel
 import io
@@ -42,25 +42,29 @@ def verifySetup(request: ProcessData):
             raise SetupCorrupted("setup values have changed")
     return True
 
+def cleanUp():
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
+
 @app.post('/setup')
 async def setUp(request: SetUp):
-    print("I am Here", request)
     modelID = request.modelID
     splitPosStart = request.splitPosStart
     splitPosEnd = request.splitPosEnd
-    print(ModelsDict,modelID, "AALAREAALA")
-    Constants["model"] = ModelsDict[modelID]("cpu")
-    Constants["splitPos"] = (splitPosStart, splitPosEnd)
+    model = ModelsDict[modelID]("cpu")
+    model.loadModel(False, False, splitPosStart, splitPosEnd)
+    Constants["model"] = model
+    # Constants["splitPos"] = (splitPosStart, splitPosEnd)
     return {
         "status": True
     }
 
 @app.post('/process')
-async def process(request: Request):
+async def process(request: Request, backgroundTasks: BackgroundTasks):
     body = await request.body()
     bufferIn = io.BytesIO(body)
     model = Constants["model"]
-    model.loadModel(False, False, *Constants["splitPos"]) 
+    # model.loadModel(False, False, *Constants["splitPos"]) 
     modelLayersOnCloud = model.layers
     hiddenStateFromLocal = torch.load(bufferIn)
     hiddenStates = hiddenStateFromLocal
@@ -78,7 +82,7 @@ async def process(request: Request):
 
         buffer = io.BytesIO()
         torch.save(hiddenStates.cpu(), buffer)
-        print(hiddenStates)
+        backgroundTasks.add_task(cleanUp)
         return Response(content=buffer.getvalue(), media_type="application/octet-stream")
 
     
