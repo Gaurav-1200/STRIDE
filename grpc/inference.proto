@@ -1,0 +1,113 @@
+syntax = "proto3";
+
+package inference;
+
+// ── Service Definition ────────────────────────────────────────────────────────
+// The server (cloud/tail) exposes this service.
+// The client (edge/head) calls it after running its head layers.
+
+service InferenceService {
+
+  // Standard unary RPC: send one activation, get one response back.
+  // Use this for Phase 1 & 2 (batch / non-streaming inference).
+  rpc RunTail (TailRequest) returns (TailResponse);
+
+  // Server-side streaming RPC: send one activation, get tokens back one-by-one.
+  // Use this in Phase 3+ for true autoregressive TTFT measurement.
+  rpc RunTailStreaming (TailRequest) returns (stream TokenResponse);
+
+  // Health check — useful for verifying the server is up before benchmarking.
+  rpc HealthCheck (HealthRequest) returns (HealthResponse);
+}
+
+// ── Request ───────────────────────────────────────────────────────────────────
+
+message TailRequest {
+  // Raw bytes of the intermediate activation tensor (torch.save'd bytes).
+  // Using bytes (not base64/hex) keeps payload compact.
+  bytes  hidden_state     = 1;
+
+  // Tensor shape so the server can reshape without deserializing first.
+  repeated int64 shape    = 2;
+
+  // dtype as string: "float32" | "float16" | "bfloat16"
+  string dtype            = 3;
+
+  // Which model is being run
+  string model_name       = 4;
+
+  // Which layer the split was made at (for server-side validation)
+  int32  split_layer      = 5;
+
+  // Serialized attention mask (optional, needed for BERT)
+  // Same format as hidden_state: raw torch.save bytes
+  bytes  attention_mask   = 6;
+
+  // Max new tokens to generate (only used in streaming RPC)
+  int32  max_new_tokens   = 7;
+}
+
+// ── Unary Response ────────────────────────────────────────────────────────────
+
+message TailResponse {
+  // Raw bytes of the output logits tensor
+  bytes  logits           = 1;
+
+  // Shape of the logits tensor
+  repeated int64 logits_shape = 2;
+
+  // Server-side metrics
+  ServerMetrics metrics   = 3;
+}
+
+// ── Streaming Response (one message per generated token) ──────────────────────
+
+message TokenResponse {
+  // The token id generated at this step
+  int32  token_id         = 1;
+
+  // Decoded text for this token (convenience)
+  string token_text       = 2;
+
+  // True on the very first token — lets client measure TTFT
+  bool   is_first_token   = 3;
+
+  // True on the last token
+  bool   is_last_token    = 4;
+
+  // Latency for this specific decode step on the server (ms)
+  float  step_latency_ms  = 5;
+
+  // Cumulative server metrics sent with the final token only
+  ServerMetrics metrics   = 6;
+}
+
+// ── Metrics ───────────────────────────────────────────────────────────────────
+
+message ServerMetrics {
+  float  e2e_latency_ms   = 1;
+  double total_flops      = 2;
+  float  peak_mem_mb      = 3;
+  string device           = 4;
+  string power_state      = 5;
+  repeated LayerMetric layer_metrics = 6;
+}
+
+message LayerMetric {
+  string layer_name       = 1;
+  float  latency_ms       = 2;
+  double flops            = 3;
+  float  mem_delta_mb     = 4;
+}
+
+
+
+message HealthRequest {}
+
+message HealthResponse {
+  bool   healthy          = 1;
+  string model_name       = 2;
+  int32  split_layer      = 3;
+  string device           = 4;
+  float  gpu_mem_free_mb  = 5;
+}
