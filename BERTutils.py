@@ -1,7 +1,12 @@
 from transformers import BertForMaskedLM, BertTokenizer,BertConfig
 import torch
-from Models import BERTHead, BERTTail
 import os
+
+def _get_bert_head_tail():
+    from Models import BERTHead, BERTTail
+    return BERTHead, BERTTail
+
+BERTHead, BERTTail = None, None
 
 def load_bert(device: str = "cpu") -> BertForMaskedLM:
     print("[BERT] Loading pretrained weights...")
@@ -49,6 +54,8 @@ def load_bert_tail(
     )
 
     print(f"[load_tail] Loaded layers {split_layer}–11 + MLM head on {device}")
+    
+    BERTHead, BERTTail = _get_bert_head_tail()
     return BERTTail(base, split_layer)
 
 def _empty_bert(config: BertConfig, device: str) -> BertForMaskedLM:
@@ -89,6 +96,9 @@ def load_bert_head(
         )
 
     print(f"[load_head] Loaded embeddings + layers 0–{split_layer-1} on {device}")
+    
+    # Lazy import to avoid circular dependency
+    BERTHead, BERTTail = _get_bert_head_tail()
     return BERTHead(base, split_layer)
 
 
