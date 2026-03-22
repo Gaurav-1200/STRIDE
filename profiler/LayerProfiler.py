@@ -158,9 +158,11 @@ class LayerProfiler:
 
     def print_layer_table(self, top_n: int = 20):
         """Pretty-print the top-N layers by latency."""
-        records = sorted(self._layer_records, key=lambda r: r.latency_ms, reverse=True)
+        # records = sorted(self._layer_records, key=lambda r: r.latency_ms, reverse=True)
+        records = self._layer_records
+
         print(f"\n{'Layer':<50} {'Latency(ms)':>12} {'FLOPs(M)':>10} {'ΔMem(MB)':>10}")
         print("-" * 85)
-        for r in records[:top_n]:
+        for r in records:
             name = r.layer_name[-49:] if len(r.layer_name) > 49 else r.layer_name
             print(f"{name:<50} {r.latency_ms:>12.2f} {r.flops/1e6:>10.2f} {r.mem_delta_mb:>10.2f}")

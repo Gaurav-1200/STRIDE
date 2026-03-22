@@ -37,9 +37,9 @@ SAMPLE_PROMPTS = {
 
 def load_head(model_name: str, split_layer: int, device: str,save_dir:str):
     if model_name == "bert": 
-        from Models import BERTHead, load_bert_tokenizer,load_bert_head
-        base = load_bert_head(save_dir, split_layer, device)
-        return BERTHead(base,split_layer), load_bert_tokenizer()
+        from Models import load_bert_tokenizer, load_bert_head
+        head = load_bert_head(save_dir, split_layer, device)  # already a BERTHead
+        return head, load_bert_tokenizer()
     else:
         raise ValueError(f"Unknown model: {model_name}")
 
@@ -213,9 +213,9 @@ def main():
     parser = argparse.ArgumentParser(description="gRPC split inference client (head side)")
     parser.add_argument("--model",        default="bert", choices=["gpt2", "bert"])
     parser.add_argument("--split-layer",  type=int, default=6)
-    parser.add_argument("--server-host",  default="192.168.31.150")
+    parser.add_argument("--server-host",  default="192.168.31.xx")
     parser.add_argument("--server-port",  type=int, default=50051)
-    parser.add_argument("--device",       default=None)
+    parser.add_argument("--device",       default="cuda")
     parser.add_argument("--runs",         type=int, default=5)
     parser.add_argument("--warmup",       type=int, default=2)
     parser.add_argument("--output-dir",   default="./results")

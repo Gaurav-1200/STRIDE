@@ -11,7 +11,7 @@ def verify_layer_io(split_layer: int = 4, save_dir: str = os.path.join(os.getcwd
 
     print(f"\n[verify_layer_io] split_layer={split_layer}, save_dir={save_dir}")
 
-    tok  = BertTokenizer.from_pretrained("bert-base-uncased")
+    tok  = BertTokenizer.from_pretrained("bert-large-uncased")
     base = load_bert("cpu")
 
     # Save

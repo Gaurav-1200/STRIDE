@@ -5,101 +5,89 @@ from typing import Optional
 import time
 from BERTutils import *
 
+class _IdentityEmbedding(nn.Module):
+    """Replaces BertEmbeddings in BERTTail — passes inputs_embeds unchanged."""
+    def forward(self, input_ids=None, token_type_ids=None, position_ids=None,
+                inputs_embeds=None, past_key_values_length=0, **kwargs):
+        return inputs_embeds
 
 def _build_ext_mask(bert, attention_mask, input_shape):
     """Prepare the 4D additive mask the way BertModel.forward() does."""
     return bert.get_extended_attention_mask(attention_mask, input_shape)
 
 class BERTFull(nn.Module):
-    """Baseline: full BERT on a single device. Returns MLM logits."""
+    """Baseline: unmodified BertForMaskedLM. Returns MLM logits."""
 
     def __init__(self, base: BertForMaskedLM):
         super().__init__()
         self.model = base
         self.num_layers = base.config.num_hidden_layers
+        print("BERTFUll , num later",self.num_layers)
 
     def forward(self, input_ids: torch.Tensor,
                 attention_mask: Optional[torch.Tensor] = None) -> torch.Tensor:
-        out = self.model(input_ids=input_ids, attention_mask=attention_mask)
-        return out.logits  # (batch, seq_len, vocab_size)
-    
+        return self.model(input_ids=input_ids, attention_mask=attention_mask).logits
 
 
 class BERTHead(nn.Module):
     """
-    Runs BertEmbeddings + BertEncoder layers [0..split_layer-1].
-    Calls BertEncoder.forward() directly — no BertModel involvement after
-    embeddings, so there is no risk of hooks or mask double-application.
-    Returns hidden state (batch, seq_len, 768).
+    Embeddings + encoder layers [0..split_layer-1].
+
+    Accepts a pre-loaded BertForMaskedLM (base). The encoder is permanently
+    sliced to head layers at init time — no runtime surgery in forward().
+    BertModel.forward() handles all mask preparation internally.
     """
 
     def __init__(self, base: BertForMaskedLM, split_layer: int):
         super().__init__()
         assert 1 <= split_layer <= 12
         self.split_layer = split_layer
-        self.bert        = base.bert  # shared, no copy
+
+        # Permanently slice to head layers only
+        base.bert.encoder.layer = nn.ModuleList(
+            base.bert.encoder.layer[:split_layer]
+        )
+        self.bert = base.bert
 
     def forward(self, input_ids: torch.Tensor,
                 attention_mask: Optional[torch.Tensor] = None) -> torch.Tensor:
-        # 1. Embeddings (word + position + token_type) — identical to BertModel
-        hidden = self.bert.embeddings(input_ids)
-
-        # 2. Build the extended mask the same way BertModel does
-        ext_mask = None
-        if attention_mask is not None:
-            ext_mask = _build_ext_mask(self.bert, attention_mask, input_ids.shape)
-
-        # 3. Run only the head layers through BertEncoder directly
-        all_layers = self.bert.encoder.layer
-        self.bert.encoder.layer = all_layers[:self.split_layer]
-        try:
-            enc_out = self.bert.encoder(
-                hidden_states=hidden,
-                attention_mask=ext_mask,
-            )
-        finally:
-            self.bert.encoder.layer = all_layers  # always restore
-
-        return enc_out.last_hidden_state  # (batch, seq_len, 768)
+        """Returns hidden states (batch, seq_len, 768)."""
+        return self.bert(
+            input_ids=input_ids, attention_mask=attention_mask
+        ).last_hidden_state
 
 class BERTTail(nn.Module):
     """
-    Receives hidden states from BERTHead.
-    Runs BertEncoder layers [split_layer..11] + MLM head.
-    Bypasses BertEmbeddings entirely — hidden states are passed straight
-    into BertEncoder, avoiding any double-embedding corruption.
+    Encoder layers [split_layer..11] + MLM head.
+
+    Accepts a pre-loaded BertForMaskedLM (base). The encoder is permanently
+    sliced to tail layers and BertEmbeddings is replaced with an identity
+    so hidden states from BERTHead pass through without re-embedding.
     """
 
     def __init__(self, base: BertForMaskedLM, split_layer: int):
         super().__init__()
-        assert 0 <= split_layer < 12
+        assert 0 <= split_layer < 24
         self.split_layer = split_layer
-        self.bert        = base.bert  # shared, no copy
-        self.cls         = base.cls   # shared MLM head
+
+        # Permanently slice to tail layers only
+        base.bert.encoder.layer = nn.ModuleList(
+            base.bert.encoder.layer[split_layer:]
+        )
+        # Identity embedding so inputs_embeds is not re-embedded
+        base.bert.embeddings = _IdentityEmbedding()
+
+        self.bert = base.bert
+        self.cls  = base.cls
 
     def forward(self, hidden: torch.Tensor,
                 attention_mask: Optional[torch.Tensor] = None) -> torch.Tensor:
         """
         Args:
-            hidden:           (batch, seq_len, 768) from BERTHead.
-            attention_mask:   original (batch, seq_len) int64 mask — optional.
+            hidden:         (batch, seq_len, 768) from BERTHead.
+            attention_mask: original (batch, seq_len) mask — optional.
         Returns:
-            logits:           (batch, seq_len, vocab_size)
+            logits:         (batch, seq_len, vocab_size)
         """
-        # Build the extended mask from the raw attention_mask
-        ext_mask = None
-        if attention_mask is not None:
-            ext_mask = _build_ext_mask(self.bert, attention_mask, hidden.shape[:2])
-
-        # Run tail layers through BertEncoder directly — no embeddings touched
-        all_layers = self.bert.encoder.layer
-        self.bert.encoder.layer = all_layers[self.split_layer:]
-        try:
-            enc_out = self.bert.encoder(
-                hidden_states=hidden,
-                attention_mask=ext_mask,
-            )
-        finally:
-            self.bert.encoder.layer = all_layers  # always restore
-
-        return self.cls(enc_out.last_hidden_state)  # (batch, seq_len, vocab_size)
+        out = self.bert(inputs_embeds=hidden, attention_mask=attention_mask)
+        return self.cls(out.last_hidden_state)

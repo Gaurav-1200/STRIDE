@@ -8,10 +8,10 @@ def _get_bert_head_tail():
 
 BERTHead, BERTTail = None, None
 
-def load_bert(device: str = "cpu") -> BertForMaskedLM:
+def load_bert(device: str = "cuda") -> BertForMaskedLM:
     print("[BERT] Loading pretrained weights...")
     model = BertForMaskedLM.from_pretrained(
-        "bert-base-uncased", attn_implementation="eager"
+        "bert-large-uncased", attn_implementation="eager"
     )
     model.eval()
     model.to(device)
@@ -21,7 +21,7 @@ def load_bert(device: str = "cpu") -> BertForMaskedLM:
 
 
 def load_bert_tokenizer() -> BertTokenizer:
-    return BertTokenizer.from_pretrained("bert-base-uncased")
+    return BertTokenizer.from_pretrained("bert-large-uncased")
 
 def load_bert_tail(
     save_dir: str,
@@ -36,12 +36,12 @@ def load_bert_tail(
     """
     # from bert_splittable import BERTTail
 
-    assert 0 <= split_layer < 12
+    assert 0 <= split_layer < 24
     config = BertConfig.from_pretrained(save_dir)
     base   = _empty_bert(config, device)
 
     # Load only the tail layers
-    for i in range(split_layer, 12):
+    for i in range(split_layer, 24):
         path = os.path.join(save_dir, f"layer_{i:02d}.pt")
         base.bert.encoder.layer[i].load_state_dict(
             torch.load(path, map_location=device, weights_only=True)
@@ -60,6 +60,7 @@ def load_bert_tail(
 
 def _empty_bert(config: BertConfig, device: str) -> BertForMaskedLM:
     """Instantiate a BertForMaskedLM with random weights (no HF download)."""
+    config._attn_implementation = "eager"
     model = BertForMaskedLM(config)
     model.eval()
     model.to(device)
@@ -78,7 +79,7 @@ def load_bert_head(
     """
     # from bert_splittable import BERTHead   # import here to avoid circular dep
 
-    assert 1 <= split_layer <= 12
+    assert 1 <= split_layer <= 24
     config = BertConfig.from_pretrained(save_dir)
     base   = _empty_bert(config, device)
 
@@ -97,7 +98,6 @@ def load_bert_head(
 
     print(f"[load_head] Loaded embeddings + layers 0–{split_layer-1} on {device}")
     
-    # Lazy import to avoid circular dependency
     BERTHead, BERTTail = _get_bert_head_tail()
     return BERTHead(base, split_layer)
 
@@ -116,25 +116,40 @@ def save_bert_layers(base: BertForMaskedLM, save_dir: str):
     """
     os.makedirs(save_dir, exist_ok=True)
 
+    # Helper function to save with file cleanup
+    def _save_with_cleanup(state_dict, filename):
+        """Save state_dict, removing old file first to avoid locking issues."""
+        # Remove existing file if present (handles locking issues)
+        if os.path.exists(filename):
+            try:
+                os.remove(filename)
+            except OSError as e:
+                raise RuntimeError(
+                    f"Cannot remove existing file {filename}: {e}. "
+                    f"Please close any programs that might be using this file."
+                ) from e
+        
+        torch.save(state_dict, filename)
+
     # Embeddings
-    torch.save(
+    _save_with_cleanup(
         base.bert.embeddings.state_dict(),
         os.path.join(save_dir, "embeddings.pt")
     )
 
     # Each encoder layer individually
     for i, layer in enumerate(base.bert.encoder.layer):
-        torch.save(
+        _save_with_cleanup(
             layer.state_dict(),
             os.path.join(save_dir, f"layer_{i:02d}.pt")
         )
 
     # MLM head
-    torch.save(
+    _save_with_cleanup(
         base.cls.state_dict(),
         os.path.join(save_dir, "mlm_head.pt")
     )
 
     # Config — needed to reconstruct empty modules on load
     base.config.save_pretrained(save_dir)
-    print(f"[save] Saved embeddings + 12 layers + MLM head to '{save_dir}'")
+    print(f"[save] Saved embeddings +24 layers + MLM head to '{save_dir}'")

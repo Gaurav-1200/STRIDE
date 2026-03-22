@@ -138,7 +138,7 @@ def run_baseline(cfg: InferenceConfig) -> RunMetrics:
 
     print(metrics.summary())
     if cfg.profile_layers:
-        layer_profiler.print_layer_table(top_n=15)
+        layer_profiler.print_layer_table(top_n=24)
 
     # ── Save ──────────────────────────────────────────────────────────────────
     os.makedirs(cfg.output_dir, exist_ok=True)
@@ -153,7 +153,7 @@ def run_baseline(cfg: InferenceConfig) -> RunMetrics:
 def main():
     parser = argparse.ArgumentParser(description="Baseline inference (single machine)")
     parser.add_argument("--model", default="bert", choices=["bert"])
-    parser.add_argument("--device", default=None)
+    parser.add_argument("--device", default="cuda")
     parser.add_argument("--runs", type=int, default=5)
     parser.add_argument("--warmup", type=int, default=2)
     parser.add_argument("--output-dir", default="./results")
