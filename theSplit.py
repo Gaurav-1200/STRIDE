@@ -5,19 +5,21 @@ import io
 import gc
 import json
 import argparse
+import time
+
+from metricsCounter import Metrics, MetricsManager
 
 
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
 def getLayerSplit(numOfLayers, numOfHosts):
-    print(numOfLayers)
     start = 0
     splits = []
     incement = numOfLayers//numOfHosts
     for i in range(numOfHosts):
         endPos = start + incement
         splits.append((start, min(endPos, numOfLayers)))
-        start = endPos+1
+        start = endPos
     return splits
 
 class OtherPlace:
@@ -37,7 +39,6 @@ class OtherPlace:
             "splitPosEnd": self.splitPosEnd
         }
         result = requests.post(url, json=data)
-        print(result.content)
         if not result.json()["status"]:
             raise Exception("Not Initialized")
 
@@ -52,6 +53,11 @@ class OtherPlace:
         outputFromServer = torch.load(responseBuffer, weights_only=True)
         self.memoryTracker.add(len(response.content)/(1024*1024), "Received")
         return outputFromServer.to(device)
+    
+    def getServerUsage(self):
+        url = f"{self.baseURL}/end"
+        response = requests.get(url)
+        return response.json()
     
 
 class MemoryTracker:
@@ -77,48 +83,57 @@ class MemoryTracker:
         return summary
 
 
-def run(prompt, hosts):
+def run(prompt, hosts, metricPath):
     modelID = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
-    model = TinyLlama(device)
-    layerSplit = getLayerSplit(model.layerCount, len(hosts)+1)
-    cloud = None
-    if len(hosts) == 1:
-        cloudURL = "http://127.0.0.1:8000"
-        cloudURL = hosts[0]
-        cloud = OtherPlace(model.modelID, layerSplit[1][0], layerSplit[1][1], cloudURL)
-    model.loadModel(True, True, *layerSplit[0])
-    text = "Hello"
-    text = f"<|system|>\nYou are a helpful assistant.<|user|>\n{prompt}<|assistant|>\n"
-    # inputs = model.tokenizer(text, return_tensors="pt")
-    inputs = model.tokenizer(text, add_special_tokens=True, return_tensors='pt').to(device)
-    inputIDs = inputs.input_ids
-    maxToken = 100 
-    eos = model.tokenizer.eos_token_id
-    with torch.no_grad():
-        step = 0
-        while step<maxToken and inputIDs[0][-1].item()!=eos:
-            step+=1
-            
-            hiddenStates = model.getInitialHiddenState(inputIDs)
-            seq_length = inputIDs.shape[1]
-            position_ids = torch.arange(0, seq_length, dtype=torch.long).unsqueeze(0)
-            rotary_module = model.model.model.rotary_emb
-            position_embeddings = rotary_module(hiddenStates, position_ids.to(device))
-            attention_mask = torch.tril(torch.ones((1, 1, seq_length, seq_length),device=device))
-            attention_mask = (1.0 - attention_mask) * torch.finfo(hiddenStates.dtype).min
-            attention_mask = attention_mask.to(hiddenStates.dtype)
-            for layer in model.layers:
-                outputs = layer(hiddenStates,attention_mask=attention_mask,
-            position_ids=position_ids,position_embeddings=position_embeddings,
-            use_cache=False)
-                hiddenStates = outputs
-            if cloud!=None:
-                hiddenStates = cloud.process(hiddenStates)
-            hiddenStates = model.getFinalHiddenStates(hiddenStates)
-            logits = model.model.lm_head(hiddenStates)
-            output = torch.argmax(logits[:, -1, :], dim=-1).unsqueeze(0)
-            inputIDs = torch.cat([inputIDs, output], dim=-1)
-    return model.tokenizer.decode(inputIDs[0])
+    localUsage = Metrics()
+    with MetricsManager(localUsage):
+        model = TinyLlama(device)
+        layerSplit = getLayerSplit(model.layerCount, len(hosts)+1)
+        model.loadModel(True, True, *layerSplit[0])
+    localUsage.setFlopProfiler(model.model)
+    with MetricsManager(localUsage):
+        cloud = None
+        if len(hosts) == 1:
+            cloudURL = "http://127.0.0.1:8000"
+            cloudURL = hosts[0]
+            cloud = OtherPlace(model.modelID, layerSplit[1][0], layerSplit[1][1], cloudURL)
+        text = "Hello"
+        text = f"<|system|>\nYou are a helpful assistant.<|user|>\n{prompt}<|assistant|>\n"
+        inputs = model.tokenizer(text, add_special_tokens=True, return_tensors='pt').to(device)
+        inputIDs = inputs.input_ids
+        maxToken = 100 
+        eos = model.tokenizer.eos_token_id
+        with torch.no_grad():
+            step = 0
+            while step<maxToken and inputIDs[0][-1].item()!=eos:
+                step+=1
+                hiddenStates = model.getInitialHiddenState(inputIDs)
+                seq_length = inputIDs.shape[1]
+                position_ids = torch.arange(0, seq_length, dtype=torch.long).unsqueeze(0)
+                rotary_module = model.model.model.rotary_emb
+                position_embeddings = rotary_module(hiddenStates, position_ids.to(device))
+                attention_mask = torch.tril(torch.ones((1, 1, seq_length, seq_length),device=device))
+                attention_mask = (1.0 - attention_mask) * torch.finfo(hiddenStates.dtype).min
+                attention_mask = attention_mask.to(hiddenStates.dtype)
+                for layer in model.layers:
+                    outputs = layer(hiddenStates,attention_mask=attention_mask,
+                position_ids=position_ids,position_embeddings=position_embeddings,
+                use_cache=False)
+                    hiddenStates = outputs
+                if cloud!=None:
+                    hiddenStates = cloud.process(hiddenStates)
+                hiddenStates = model.getFinalHiddenStates(hiddenStates)
+                logits = model.model.lm_head(hiddenStates[:,-1,:])
+                output = torch.argmax(logits, dim=-1).unsqueeze(0)
+                inputIDs = torch.cat([inputIDs, output], dim=-1)
+        cloudUsage = None
+        if cloud!=None:
+            cloudUsage = cloud.getServerUsage()
+        output = model.tokenizer.decode(inputIDs[0])
+    allMetrics = [localUsage.getJson(), cloudUsage]
+    allMetrics = [metric for metric in allMetrics if metric!=None]
+    Metrics.saveUsageDict(*allMetrics, metricPath=metricPath)
+    return output
 
 
 
@@ -126,7 +141,9 @@ if __name__=="__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--prompt", type=str, default="Where is Delhi")
     parser.add_argument('--hosts', nargs='+', type=str, default="")
+    parser.add_argument('--metricPath', type=str, default="Metrics.json")
     parsedValues = parser.parse_args()
-    print(run(parsedValues.prompt, parsedValues.hosts))
+    output = run(parsedValues.prompt, parsedValues.hosts, parsedValues.metricPath)
+    print(output)
     gc.collect()
     torch.cuda.empty_cache()

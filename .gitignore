@@ -209,3 +209,4 @@ __marimo__/
 config.py
 *.ipynb
 *.json
+*.csv
