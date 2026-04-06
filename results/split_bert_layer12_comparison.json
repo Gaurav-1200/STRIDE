@@ -1,0 +1,18 @@
+{
+  "model": "bert",
+  "split_layer": 12,
+  "baseline_server_flops": 8961817832.0,
+  "split_server_flops": 4742015208.0,
+  "server_flop_reduction_pct": 47.086458384953254,
+  "baseline_server_latency_ms": 28.80872000241652,
+  "split_server_latency_ms": 42.152198791503906,
+  "server_latency_reduction_pct": -46.317499659714535,
+  "baseline_server_mem_mb": 1354.357248,
+  "split_server_mem_mb": 745.5554809570312,
+  "server_mem_reduction_pct": 44.9513426344486,
+  "estimated_throughput_gain_x": 1.8898753881853851,
+  "e2e_latency_split_ms": 186.68705999152735,
+  "e2e_latency_increase_ms": 157.87833998911083,
+  "comm_overhead_ms": 108.77841891376302,
+  "tensor_payload_mb": 0.038441
+}

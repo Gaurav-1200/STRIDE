@@ -1,0 +1,1711 @@
+{
+  "run_type": "split_client",
+  "model_name": "bert",
+  "split_layer": 12,
+  "device": "cuda",
+  "ttft_ms": 0.0,
+  "e2e_latency_ms": 186.68705999152735,
+  "total_flops": 4219802624.0,
+  "peak_mem_mb": 742.587392,
+  "total_mem_mb": 0.0,
+  "tensor_size_bytes": 38441,
+  "comm_latency_ms": 108.77841891376302,
+  "layer_metrics": [
+    {
+      "layer_name": "bert.embeddings.word_embeddings",
+      "flops": 62509056.0,
+      "latency_ms": 0.19759999122470617,
+      "mem_before_mb": 742.176768,
+      "mem_after_mb": 742.213632,
+      "mem_delta_mb": 0.03686399999992318
+    },
+    {
+      "layer_name": "bert.embeddings.token_type_embeddings",
+      "flops": 4096.0,
+      "latency_ms": 0.1382000045850873,
+      "mem_before_mb": 742.213632,
+      "mem_after_mb": 742.250496,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.embeddings.position_embeddings",
+      "flops": 1048576.0,
+      "latency_ms": 0.10150001617148519,
+      "mem_before_mb": 742.28736,
+      "mem_after_mb": 742.324224,
+      "mem_delta_mb": 0.03686399999992318
+    },
+    {
+      "layer_name": "bert.embeddings.LayerNorm",
+      "flops": 46080.0,
+      "latency_ms": 0.11389999417588115,
+      "mem_before_mb": 742.324224,
+      "mem_after_mb": 742.361088,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.embeddings.dropout",
+      "flops": 0.0,
+      "latency_ms": 0.0706000137142837,
+      "mem_before_mb": 742.324224,
+      "mem_after_mb": 742.324224,
+      "mem_delta_mb": 0.0
+    },
+    {
+      "layer_name": "bert.embeddings",
+      "flops": 63565824.0,
+      "latency_ms": 1.3769000070169568,
+      "mem_before_mb": 742.176256,
+      "mem_after_mb": 742.21312,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.0.attention.self.query",
+      "flops": 18874368.0,
+      "latency_ms": 0.13080000644549727,
+      "mem_before_mb": 742.21312,
+      "mem_after_mb": 742.249984,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.0.attention.self.key",
+      "flops": 18874368.0,
+      "latency_ms": 0.10249996557831764,
+      "mem_before_mb": 742.249984,
+      "mem_after_mb": 742.286848,
+      "mem_delta_mb": 0.03686399999992318
+    },
+    {
+      "layer_name": "bert.encoder.layer.0.attention.self.value",
+      "flops": 18874368.0,
+      "latency_ms": 0.09960000170394778,
+      "mem_before_mb": 742.286848,
+      "mem_after_mb": 742.323712,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.0.attention.self",
+      "flops": 6297600.0,
+      "latency_ms": 0.9771999903023243,
+      "mem_before_mb": 742.21312,
+      "mem_after_mb": 742.255616,
+      "mem_delta_mb": 0.04249600000002829
+    },
+    {
+      "layer_name": "bert.encoder.layer.0.attention.output.dense",
+      "flops": 18874368.0,
+      "latency_ms": 0.10689999908208847,
+      "mem_before_mb": 742.255616,
+      "mem_after_mb": 742.29248,
+      "mem_delta_mb": 0.03686399999992318
+    },
+    {
+      "layer_name": "bert.encoder.layer.0.attention.output.dropout",
+      "flops": 0.0,
+      "latency_ms": 0.06360001862049103,
+      "mem_before_mb": 742.29248,
+      "mem_after_mb": 742.29248,
+      "mem_delta_mb": 0.0
+    },
+    {
+      "layer_name": "bert.encoder.layer.0.attention.output.LayerNorm",
+      "flops": 46080.0,
+      "latency_ms": 0.118900032248348,
+      "mem_before_mb": 742.329344,
+      "mem_after_mb": 742.366208,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.0.attention.output",
+      "flops": 2103296.0,
+      "latency_ms": 0.6588000105693936,
+      "mem_before_mb": 742.255616,
+      "mem_after_mb": 742.29248,
+      "mem_delta_mb": 0.03686399999992318
+    },
+    {
+      "layer_name": "bert.encoder.layer.0.attention",
+      "flops": 8400896.0,
+      "latency_ms": 1.85779994353652,
+      "mem_before_mb": 742.21312,
+      "mem_after_mb": 742.255616,
+      "mem_delta_mb": 0.04249600000002829
+    },
+    {
+      "layer_name": "bert.encoder.layer.0.intermediate.dense",
+      "flops": 75497472.0,
+      "latency_ms": 0.12019998393952847,
+      "mem_before_mb": 742.255616,
+      "mem_after_mb": 742.403072,
+      "mem_delta_mb": 0.1474559999999201
+    },
+    {
+      "layer_name": "bert.encoder.layer.0.intermediate.intermediate_act_fn",
+      "flops": 0.0,
+      "latency_ms": 0.11439999798312783,
+      "mem_before_mb": 742.403072,
+      "mem_after_mb": 742.550528,
+      "mem_delta_mb": 0.14745600000003378
+    },
+    {
+      "layer_name": "bert.encoder.layer.0.intermediate",
+      "flops": 8396800.0,
+      "latency_ms": 0.46629999997094274,
+      "mem_before_mb": 742.255616,
+      "mem_after_mb": 742.403072,
+      "mem_delta_mb": 0.1474559999999201
+    },
+    {
+      "layer_name": "bert.encoder.layer.0.output.dense",
+      "flops": 75497472.0,
+      "latency_ms": 0.26240001898258924,
+      "mem_before_mb": 742.403072,
+      "mem_after_mb": 742.439936,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.0.output.dropout",
+      "flops": 0.0,
+      "latency_ms": 0.08819997310638428,
+      "mem_before_mb": 742.439936,
+      "mem_after_mb": 742.439936,
+      "mem_delta_mb": 0.0
+    },
+    {
+      "layer_name": "bert.encoder.layer.0.output.LayerNorm",
+      "flops": 46080.0,
+      "latency_ms": 0.12279994552955031,
+      "mem_before_mb": 742.4768,
+      "mem_after_mb": 742.513664,
+      "mem_delta_mb": 0.03686399999992318
+    },
+    {
+      "layer_name": "bert.encoder.layer.0.output",
+      "flops": 8394752.0,
+      "latency_ms": 0.7883000071160495,
+      "mem_before_mb": 742.403072,
+      "mem_after_mb": 742.439936,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.0",
+      "flops": 25192448.0,
+      "latency_ms": 3.41370003297925,
+      "mem_before_mb": 742.21312,
+      "mem_after_mb": 742.249984,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.1.attention.self.query",
+      "flops": 18874368.0,
+      "latency_ms": 0.10720000136643648,
+      "mem_before_mb": 742.249984,
+      "mem_after_mb": 742.286848,
+      "mem_delta_mb": 0.03686399999992318
+    },
+    {
+      "layer_name": "bert.encoder.layer.1.attention.self.key",
+      "flops": 18874368.0,
+      "latency_ms": 0.1066999975591898,
+      "mem_before_mb": 742.286848,
+      "mem_after_mb": 742.323712,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.1.attention.self.value",
+      "flops": 18874368.0,
+      "latency_ms": 0.10870001278817654,
+      "mem_before_mb": 742.323712,
+      "mem_after_mb": 742.360576,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.1.attention.self",
+      "flops": 6297600.0,
+      "latency_ms": 0.9351999615319073,
+      "mem_before_mb": 742.249984,
+      "mem_after_mb": 742.29248,
+      "mem_delta_mb": 0.0424959999999146
+    },
+    {
+      "layer_name": "bert.encoder.layer.1.attention.output.dense",
+      "flops": 18874368.0,
+      "latency_ms": 0.10929995914921165,
+      "mem_before_mb": 742.29248,
+      "mem_after_mb": 742.329344,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.1.attention.output.dropout",
+      "flops": 0.0,
+      "latency_ms": 0.07019995246082544,
+      "mem_before_mb": 742.329344,
+      "mem_after_mb": 742.329344,
+      "mem_delta_mb": 0.0
+    },
+    {
+      "layer_name": "bert.encoder.layer.1.attention.output.LayerNorm",
+      "flops": 46080.0,
+      "latency_ms": 0.1273000380024314,
+      "mem_before_mb": 742.366208,
+      "mem_after_mb": 742.403072,
+      "mem_delta_mb": 0.03686399999992318
+    },
+    {
+      "layer_name": "bert.encoder.layer.1.attention.output",
+      "flops": 2103296.0,
+      "latency_ms": 0.6544999778270721,
+      "mem_before_mb": 742.29248,
+      "mem_after_mb": 742.329344,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.1.attention",
+      "flops": 8400896.0,
+      "latency_ms": 1.80899997940287,
+      "mem_before_mb": 742.249984,
+      "mem_after_mb": 742.29248,
+      "mem_delta_mb": 0.0424959999999146
+    },
+    {
+      "layer_name": "bert.encoder.layer.1.intermediate.dense",
+      "flops": 75497472.0,
+      "latency_ms": 0.10880001354962587,
+      "mem_before_mb": 742.29248,
+      "mem_after_mb": 742.439936,
+      "mem_delta_mb": 0.14745600000003378
+    },
+    {
+      "layer_name": "bert.encoder.layer.1.intermediate.intermediate_act_fn",
+      "flops": 0.0,
+      "latency_ms": 0.11409999569877982,
+      "mem_before_mb": 742.439936,
+      "mem_after_mb": 742.587392,
+      "mem_delta_mb": 0.14745600000003378
+    },
+    {
+      "layer_name": "bert.encoder.layer.1.intermediate",
+      "flops": 8396800.0,
+      "latency_ms": 0.4540000227279961,
+      "mem_before_mb": 742.29248,
+      "mem_after_mb": 742.439936,
+      "mem_delta_mb": 0.14745600000003378
+    },
+    {
+      "layer_name": "bert.encoder.layer.1.output.dense",
+      "flops": 75497472.0,
+      "latency_ms": 0.10310002835467458,
+      "mem_before_mb": 742.439936,
+      "mem_after_mb": 742.4768,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.1.output.dropout",
+      "flops": 0.0,
+      "latency_ms": 0.08600001456215978,
+      "mem_before_mb": 742.4768,
+      "mem_after_mb": 742.4768,
+      "mem_delta_mb": 0.0
+    },
+    {
+      "layer_name": "bert.encoder.layer.1.output.LayerNorm",
+      "flops": 46080.0,
+      "latency_ms": 0.11560000712051988,
+      "mem_before_mb": 742.513664,
+      "mem_after_mb": 742.550528,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.1.output",
+      "flops": 8394752.0,
+      "latency_ms": 0.5998000269755721,
+      "mem_before_mb": 742.439936,
+      "mem_after_mb": 742.4768,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.1",
+      "flops": 25192448.0,
+      "latency_ms": 3.3564000041224062,
+      "mem_before_mb": 742.249984,
+      "mem_after_mb": 742.286848,
+      "mem_delta_mb": 0.03686399999992318
+    },
+    {
+      "layer_name": "bert.encoder.layer.2.attention.self.query",
+      "flops": 18874368.0,
+      "latency_ms": 0.11180003639310598,
+      "mem_before_mb": 742.249984,
+      "mem_after_mb": 742.286848,
+      "mem_delta_mb": 0.03686399999992318
+    },
+    {
+      "layer_name": "bert.encoder.layer.2.attention.self.key",
+      "flops": 18874368.0,
+      "latency_ms": 0.10569998994469643,
+      "mem_before_mb": 742.286848,
+      "mem_after_mb": 742.323712,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.2.attention.self.value",
+      "flops": 18874368.0,
+      "latency_ms": 0.10380003368481994,
+      "mem_before_mb": 742.323712,
+      "mem_after_mb": 742.360576,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.2.attention.self",
+      "flops": 6297600.0,
+      "latency_ms": 0.948999950196594,
+      "mem_before_mb": 742.249984,
+      "mem_after_mb": 742.29248,
+      "mem_delta_mb": 0.0424959999999146
+    },
+    {
+      "layer_name": "bert.encoder.layer.2.attention.output.dense",
+      "flops": 18874368.0,
+      "latency_ms": 0.12879999121651053,
+      "mem_before_mb": 742.29248,
+      "mem_after_mb": 742.329344,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.2.attention.output.dropout",
+      "flops": 0.0,
+      "latency_ms": 0.0667999847792089,
+      "mem_before_mb": 742.329344,
+      "mem_after_mb": 742.329344,
+      "mem_delta_mb": 0.0
+    },
+    {
+      "layer_name": "bert.encoder.layer.2.attention.output.LayerNorm",
+      "flops": 46080.0,
+      "latency_ms": 0.11920003453269601,
+      "mem_before_mb": 742.366208,
+      "mem_after_mb": 742.403072,
+      "mem_delta_mb": 0.03686399999992318
+    },
+    {
+      "layer_name": "bert.encoder.layer.2.attention.output",
+      "flops": 2103296.0,
+      "latency_ms": 0.659200013615191,
+      "mem_before_mb": 742.29248,
+      "mem_after_mb": 742.329344,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.2.attention",
+      "flops": 8400896.0,
+      "latency_ms": 1.8313999753445387,
+      "mem_before_mb": 742.249984,
+      "mem_after_mb": 742.29248,
+      "mem_delta_mb": 0.0424959999999146
+    },
+    {
+      "layer_name": "bert.encoder.layer.2.intermediate.dense",
+      "flops": 75497472.0,
+      "latency_ms": 0.10770000517368317,
+      "mem_before_mb": 742.29248,
+      "mem_after_mb": 742.439936,
+      "mem_delta_mb": 0.14745600000003378
+    },
+    {
+      "layer_name": "bert.encoder.layer.2.intermediate.intermediate_act_fn",
+      "flops": 0.0,
+      "latency_ms": 0.31109998235479,
+      "mem_before_mb": 742.439936,
+      "mem_after_mb": 742.587392,
+      "mem_delta_mb": 0.14745600000003378
+    },
+    {
+      "layer_name": "bert.encoder.layer.2.intermediate",
+      "flops": 8396800.0,
+      "latency_ms": 0.6464999751187861,
+      "mem_before_mb": 742.29248,
+      "mem_after_mb": 742.439936,
+      "mem_delta_mb": 0.14745600000003378
+    },
+    {
+      "layer_name": "bert.encoder.layer.2.output.dense",
+      "flops": 75497472.0,
+      "latency_ms": 0.10060000931844115,
+      "mem_before_mb": 742.439936,
+      "mem_after_mb": 742.4768,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.2.output.dropout",
+      "flops": 0.0,
+      "latency_ms": 0.08800002979114652,
+      "mem_before_mb": 742.4768,
+      "mem_after_mb": 742.4768,
+      "mem_delta_mb": 0.0
+    },
+    {
+      "layer_name": "bert.encoder.layer.2.output.LayerNorm",
+      "flops": 46080.0,
+      "latency_ms": 0.11850002920255065,
+      "mem_before_mb": 742.513664,
+      "mem_after_mb": 742.550528,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.2.output",
+      "flops": 8394752.0,
+      "latency_ms": 0.6021999870426953,
+      "mem_before_mb": 742.439936,
+      "mem_after_mb": 742.4768,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.2",
+      "flops": 25192448.0,
+      "latency_ms": 3.3682999783195555,
+      "mem_before_mb": 742.249984,
+      "mem_after_mb": 742.286848,
+      "mem_delta_mb": 0.03686399999992318
+    },
+    {
+      "layer_name": "bert.encoder.layer.3.attention.self.query",
+      "flops": 18874368.0,
+      "latency_ms": 0.10250002378597856,
+      "mem_before_mb": 742.249984,
+      "mem_after_mb": 742.286848,
+      "mem_delta_mb": 0.03686399999992318
+    },
+    {
+      "layer_name": "bert.encoder.layer.3.attention.self.key",
+      "flops": 18874368.0,
+      "latency_ms": 0.10599999222904444,
+      "mem_before_mb": 742.286848,
+      "mem_after_mb": 742.323712,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.3.attention.self.value",
+      "flops": 18874368.0,
+      "latency_ms": 0.10279996786266565,
+      "mem_before_mb": 742.323712,
+      "mem_after_mb": 742.360576,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.3.attention.self",
+      "flops": 6297600.0,
+      "latency_ms": 0.9033000096678734,
+      "mem_before_mb": 742.249984,
+      "mem_after_mb": 742.29248,
+      "mem_delta_mb": 0.0424959999999146
+    },
+    {
+      "layer_name": "bert.encoder.layer.3.attention.output.dense",
+      "flops": 18874368.0,
+      "latency_ms": 0.10770000517368317,
+      "mem_before_mb": 742.29248,
+      "mem_after_mb": 742.329344,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.3.attention.output.dropout",
+      "flops": 0.0,
+      "latency_ms": 0.06569997640326619,
+      "mem_before_mb": 742.329344,
+      "mem_after_mb": 742.329344,
+      "mem_delta_mb": 0.0
+    },
+    {
+      "layer_name": "bert.encoder.layer.3.attention.output.LayerNorm",
+      "flops": 46080.0,
+      "latency_ms": 0.11940003605559468,
+      "mem_before_mb": 742.366208,
+      "mem_after_mb": 742.403072,
+      "mem_delta_mb": 0.03686399999992318
+    },
+    {
+      "layer_name": "bert.encoder.layer.3.attention.output",
+      "flops": 2103296.0,
+      "latency_ms": 0.6337999948300421,
+      "mem_before_mb": 742.29248,
+      "mem_after_mb": 742.329344,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.3.attention",
+      "flops": 8400896.0,
+      "latency_ms": 1.7615000251680613,
+      "mem_before_mb": 742.249984,
+      "mem_after_mb": 742.29248,
+      "mem_delta_mb": 0.0424959999999146
+    },
+    {
+      "layer_name": "bert.encoder.layer.3.intermediate.dense",
+      "flops": 75497472.0,
+      "latency_ms": 0.11020002420991659,
+      "mem_before_mb": 742.29248,
+      "mem_after_mb": 742.439936,
+      "mem_delta_mb": 0.14745600000003378
+    },
+    {
+      "layer_name": "bert.encoder.layer.3.intermediate.intermediate_act_fn",
+      "flops": 0.0,
+      "latency_ms": 0.10660005500540137,
+      "mem_before_mb": 742.439936,
+      "mem_after_mb": 742.587392,
+      "mem_delta_mb": 0.14745600000003378
+    },
+    {
+      "layer_name": "bert.encoder.layer.3.intermediate",
+      "flops": 8396800.0,
+      "latency_ms": 0.6429000059142709,
+      "mem_before_mb": 742.29248,
+      "mem_after_mb": 742.439936,
+      "mem_delta_mb": 0.14745600000003378
+    },
+    {
+      "layer_name": "bert.encoder.layer.3.output.dense",
+      "flops": 75497472.0,
+      "latency_ms": 0.1303000026382506,
+      "mem_before_mb": 742.439936,
+      "mem_after_mb": 742.4768,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.3.output.dropout",
+      "flops": 0.0,
+      "latency_ms": 0.07059995550662279,
+      "mem_before_mb": 742.4768,
+      "mem_after_mb": 742.4768,
+      "mem_delta_mb": 0.0
+    },
+    {
+      "layer_name": "bert.encoder.layer.3.output.LayerNorm",
+      "flops": 46080.0,
+      "latency_ms": 0.12290000449866056,
+      "mem_before_mb": 742.513664,
+      "mem_after_mb": 742.550528,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.3.output",
+      "flops": 8394752.0,
+      "latency_ms": 0.6593000143766403,
+      "mem_before_mb": 742.439936,
+      "mem_after_mb": 742.4768,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.3",
+      "flops": 25192448.0,
+      "latency_ms": 3.3555999980308115,
+      "mem_before_mb": 742.249984,
+      "mem_after_mb": 742.286848,
+      "mem_delta_mb": 0.03686399999992318
+    },
+    {
+      "layer_name": "bert.encoder.layer.4.attention.self.query",
+      "flops": 18874368.0,
+      "latency_ms": 0.10740000288933516,
+      "mem_before_mb": 742.249984,
+      "mem_after_mb": 742.286848,
+      "mem_delta_mb": 0.03686399999992318
+    },
+    {
+      "layer_name": "bert.encoder.layer.4.attention.self.key",
+      "flops": 18874368.0,
+      "latency_ms": 0.1058999914675951,
+      "mem_before_mb": 742.286848,
+      "mem_after_mb": 742.323712,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.4.attention.self.value",
+      "flops": 18874368.0,
+      "latency_ms": 0.10739994468167424,
+      "mem_before_mb": 742.323712,
+      "mem_after_mb": 742.360576,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.4.attention.self",
+      "flops": 6297600.0,
+      "latency_ms": 0.8626999915577471,
+      "mem_before_mb": 742.249984,
+      "mem_after_mb": 742.29248,
+      "mem_delta_mb": 0.0424959999999146
+    },
+    {
+      "layer_name": "bert.encoder.layer.4.attention.output.dense",
+      "flops": 18874368.0,
+      "latency_ms": 0.10679999832063913,
+      "mem_before_mb": 742.29248,
+      "mem_after_mb": 742.329344,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.4.attention.output.dropout",
+      "flops": 0.0,
+      "latency_ms": 0.06579997716471553,
+      "mem_before_mb": 742.329344,
+      "mem_after_mb": 742.329344,
+      "mem_delta_mb": 0.0
+    },
+    {
+      "layer_name": "bert.encoder.layer.4.attention.output.LayerNorm",
+      "flops": 46080.0,
+      "latency_ms": 0.09520002640783787,
+      "mem_before_mb": 742.366208,
+      "mem_after_mb": 742.403072,
+      "mem_delta_mb": 0.03686399999992318
+    },
+    {
+      "layer_name": "bert.encoder.layer.4.attention.output",
+      "flops": 2103296.0,
+      "latency_ms": 0.6073999684303999,
+      "mem_before_mb": 742.29248,
+      "mem_after_mb": 742.329344,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.4.attention",
+      "flops": 8400896.0,
+      "latency_ms": 1.9051999552175403,
+      "mem_before_mb": 742.249984,
+      "mem_after_mb": 742.29248,
+      "mem_delta_mb": 0.0424959999999146
+    },
+    {
+      "layer_name": "bert.encoder.layer.4.intermediate.dense",
+      "flops": 75497472.0,
+      "latency_ms": 0.10649999603629112,
+      "mem_before_mb": 742.29248,
+      "mem_after_mb": 742.439936,
+      "mem_delta_mb": 0.14745600000003378
+    },
+    {
+      "layer_name": "bert.encoder.layer.4.intermediate.intermediate_act_fn",
+      "flops": 0.0,
+      "latency_ms": 0.10000000474974513,
+      "mem_before_mb": 742.439936,
+      "mem_after_mb": 742.587392,
+      "mem_delta_mb": 0.14745600000003378
+    },
+    {
+      "layer_name": "bert.encoder.layer.4.intermediate",
+      "flops": 8396800.0,
+      "latency_ms": 0.4216000088490546,
+      "mem_before_mb": 742.29248,
+      "mem_after_mb": 742.439936,
+      "mem_delta_mb": 0.14745600000003378
+    },
+    {
+      "layer_name": "bert.encoder.layer.4.output.dense",
+      "flops": 75497472.0,
+      "latency_ms": 0.10170001769438386,
+      "mem_before_mb": 742.439936,
+      "mem_after_mb": 742.4768,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.4.output.dropout",
+      "flops": 0.0,
+      "latency_ms": 0.07670000195503235,
+      "mem_before_mb": 742.4768,
+      "mem_after_mb": 742.4768,
+      "mem_delta_mb": 0.0
+    },
+    {
+      "layer_name": "bert.encoder.layer.4.output.LayerNorm",
+      "flops": 46080.0,
+      "latency_ms": 0.10599999222904444,
+      "mem_before_mb": 742.513664,
+      "mem_after_mb": 742.550528,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.4.output",
+      "flops": 8394752.0,
+      "latency_ms": 0.5657000001519918,
+      "mem_before_mb": 742.439936,
+      "mem_after_mb": 742.4768,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.4",
+      "flops": 25192448.0,
+      "latency_ms": 3.222999977879226,
+      "mem_before_mb": 742.249984,
+      "mem_after_mb": 742.286848,
+      "mem_delta_mb": 0.03686399999992318
+    },
+    {
+      "layer_name": "bert.encoder.layer.5.attention.self.query",
+      "flops": 18874368.0,
+      "latency_ms": 0.10730000212788582,
+      "mem_before_mb": 742.249984,
+      "mem_after_mb": 742.286848,
+      "mem_delta_mb": 0.03686399999992318
+    },
+    {
+      "layer_name": "bert.encoder.layer.5.attention.self.key",
+      "flops": 18874368.0,
+      "latency_ms": 0.10419997852295637,
+      "mem_before_mb": 742.286848,
+      "mem_after_mb": 742.323712,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.5.attention.self.value",
+      "flops": 18874368.0,
+      "latency_ms": 0.10310002835467458,
+      "mem_before_mb": 742.323712,
+      "mem_after_mb": 742.360576,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.5.attention.self",
+      "flops": 6297600.0,
+      "latency_ms": 0.9181000059470534,
+      "mem_before_mb": 742.249984,
+      "mem_after_mb": 742.29248,
+      "mem_delta_mb": 0.0424959999999146
+    },
+    {
+      "layer_name": "bert.encoder.layer.5.attention.output.dense",
+      "flops": 18874368.0,
+      "latency_ms": 0.12440001592040062,
+      "mem_before_mb": 742.29248,
+      "mem_after_mb": 742.329344,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.5.attention.output.dropout",
+      "flops": 0.0,
+      "latency_ms": 0.06610003765672445,
+      "mem_before_mb": 742.329344,
+      "mem_after_mb": 742.329344,
+      "mem_delta_mb": 0.0
+    },
+    {
+      "layer_name": "bert.encoder.layer.5.attention.output.LayerNorm",
+      "flops": 46080.0,
+      "latency_ms": 0.10760000441223383,
+      "mem_before_mb": 742.366208,
+      "mem_after_mb": 742.403072,
+      "mem_delta_mb": 0.03686399999992318
+    },
+    {
+      "layer_name": "bert.encoder.layer.5.attention.output",
+      "flops": 2103296.0,
+      "latency_ms": 0.9115000138990581,
+      "mem_before_mb": 742.29248,
+      "mem_after_mb": 742.329344,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.5.attention",
+      "flops": 8400896.0,
+      "latency_ms": 2.1037000115029514,
+      "mem_before_mb": 742.249984,
+      "mem_after_mb": 742.29248,
+      "mem_delta_mb": 0.0424959999999146
+    },
+    {
+      "layer_name": "bert.encoder.layer.5.intermediate.dense",
+      "flops": 75497472.0,
+      "latency_ms": 0.11389999417588115,
+      "mem_before_mb": 742.29248,
+      "mem_after_mb": 742.439936,
+      "mem_delta_mb": 0.14745600000003378
+    },
+    {
+      "layer_name": "bert.encoder.layer.5.intermediate.intermediate_act_fn",
+      "flops": 0.0,
+      "latency_ms": 0.10000000474974513,
+      "mem_before_mb": 742.439936,
+      "mem_after_mb": 742.587392,
+      "mem_delta_mb": 0.14745600000003378
+    },
+    {
+      "layer_name": "bert.encoder.layer.5.intermediate",
+      "flops": 8396800.0,
+      "latency_ms": 0.43780001578852534,
+      "mem_before_mb": 742.29248,
+      "mem_after_mb": 742.439936,
+      "mem_delta_mb": 0.14745600000003378
+    },
+    {
+      "layer_name": "bert.encoder.layer.5.output.dense",
+      "flops": 75497472.0,
+      "latency_ms": 0.09950000094249845,
+      "mem_before_mb": 742.439936,
+      "mem_after_mb": 742.4768,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.5.output.dropout",
+      "flops": 0.0,
+      "latency_ms": 0.07880001794546843,
+      "mem_before_mb": 742.4768,
+      "mem_after_mb": 742.4768,
+      "mem_delta_mb": 0.0
+    },
+    {
+      "layer_name": "bert.encoder.layer.5.output.LayerNorm",
+      "flops": 46080.0,
+      "latency_ms": 0.10590004967525601,
+      "mem_before_mb": 742.513664,
+      "mem_after_mb": 742.550528,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.5.output",
+      "flops": 8394752.0,
+      "latency_ms": 0.5684000207111239,
+      "mem_before_mb": 742.439936,
+      "mem_after_mb": 742.4768,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.5",
+      "flops": 25192448.0,
+      "latency_ms": 3.414899983908981,
+      "mem_before_mb": 742.249984,
+      "mem_after_mb": 742.286848,
+      "mem_delta_mb": 0.03686399999992318
+    },
+    {
+      "layer_name": "bert.encoder.layer.6.attention.self.query",
+      "flops": 18874368.0,
+      "latency_ms": 0.10599999222904444,
+      "mem_before_mb": 742.249984,
+      "mem_after_mb": 742.286848,
+      "mem_delta_mb": 0.03686399999992318
+    },
+    {
+      "layer_name": "bert.encoder.layer.6.attention.self.key",
+      "flops": 18874368.0,
+      "latency_ms": 0.13729999773204327,
+      "mem_before_mb": 742.286848,
+      "mem_after_mb": 742.323712,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.6.attention.self.value",
+      "flops": 18874368.0,
+      "latency_ms": 0.15119998715817928,
+      "mem_before_mb": 742.323712,
+      "mem_after_mb": 742.360576,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.6.attention.self",
+      "flops": 6297600.0,
+      "latency_ms": 1.04750000173226,
+      "mem_before_mb": 742.249984,
+      "mem_after_mb": 742.29248,
+      "mem_delta_mb": 0.0424959999999146
+    },
+    {
+      "layer_name": "bert.encoder.layer.6.attention.output.dense",
+      "flops": 18874368.0,
+      "latency_ms": 0.33840001560747623,
+      "mem_before_mb": 742.29248,
+      "mem_after_mb": 742.329344,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.6.attention.output.dropout",
+      "flops": 0.0,
+      "latency_ms": 0.06549997488036752,
+      "mem_before_mb": 742.329344,
+      "mem_after_mb": 742.329344,
+      "mem_delta_mb": 0.0
+    },
+    {
+      "layer_name": "bert.encoder.layer.6.attention.output.LayerNorm",
+      "flops": 46080.0,
+      "latency_ms": 0.09490002412348986,
+      "mem_before_mb": 742.366208,
+      "mem_after_mb": 742.403072,
+      "mem_delta_mb": 0.03686399999992318
+    },
+    {
+      "layer_name": "bert.encoder.layer.6.attention.output",
+      "flops": 2103296.0,
+      "latency_ms": 0.8567000040784478,
+      "mem_before_mb": 742.29248,
+      "mem_after_mb": 742.329344,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.6.attention",
+      "flops": 8400896.0,
+      "latency_ms": 2.1256000036373734,
+      "mem_before_mb": 742.249984,
+      "mem_after_mb": 742.29248,
+      "mem_delta_mb": 0.0424959999999146
+    },
+    {
+      "layer_name": "bert.encoder.layer.6.intermediate.dense",
+      "flops": 75497472.0,
+      "latency_ms": 0.10750000365078449,
+      "mem_before_mb": 742.29248,
+      "mem_after_mb": 742.439936,
+      "mem_delta_mb": 0.14745600000003378
+    },
+    {
+      "layer_name": "bert.encoder.layer.6.intermediate.intermediate_act_fn",
+      "flops": 0.0,
+      "latency_ms": 0.10369997471570969,
+      "mem_before_mb": 742.439936,
+      "mem_after_mb": 742.587392,
+      "mem_delta_mb": 0.14745600000003378
+    },
+    {
+      "layer_name": "bert.encoder.layer.6.intermediate",
+      "flops": 8396800.0,
+      "latency_ms": 0.43270003516227007,
+      "mem_before_mb": 742.29248,
+      "mem_after_mb": 742.439936,
+      "mem_delta_mb": 0.14745600000003378
+    },
+    {
+      "layer_name": "bert.encoder.layer.6.output.dense",
+      "flops": 75497472.0,
+      "latency_ms": 0.1058999914675951,
+      "mem_before_mb": 742.439936,
+      "mem_after_mb": 742.4768,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.6.output.dropout",
+      "flops": 0.0,
+      "latency_ms": 0.08259998867288232,
+      "mem_before_mb": 742.4768,
+      "mem_after_mb": 742.4768,
+      "mem_delta_mb": 0.0
+    },
+    {
+      "layer_name": "bert.encoder.layer.6.output.LayerNorm",
+      "flops": 46080.0,
+      "latency_ms": 0.10880001354962587,
+      "mem_before_mb": 742.513664,
+      "mem_after_mb": 742.550528,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.6.output",
+      "flops": 8394752.0,
+      "latency_ms": 0.624599982984364,
+      "mem_before_mb": 742.439936,
+      "mem_after_mb": 742.4768,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.6",
+      "flops": 25192448.0,
+      "latency_ms": 3.500599996186793,
+      "mem_before_mb": 742.249984,
+      "mem_after_mb": 742.286848,
+      "mem_delta_mb": 0.03686399999992318
+    },
+    {
+      "layer_name": "bert.encoder.layer.7.attention.self.query",
+      "flops": 18874368.0,
+      "latency_ms": 0.11369999265298247,
+      "mem_before_mb": 742.249984,
+      "mem_after_mb": 742.286848,
+      "mem_delta_mb": 0.03686399999992318
+    },
+    {
+      "layer_name": "bert.encoder.layer.7.attention.self.key",
+      "flops": 18874368.0,
+      "latency_ms": 0.11609995272010565,
+      "mem_before_mb": 742.286848,
+      "mem_after_mb": 742.323712,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.7.attention.self.value",
+      "flops": 18874368.0,
+      "latency_ms": 0.10689999908208847,
+      "mem_before_mb": 742.323712,
+      "mem_after_mb": 742.360576,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.7.attention.self",
+      "flops": 6297600.0,
+      "latency_ms": 0.9361999691464007,
+      "mem_before_mb": 742.249984,
+      "mem_after_mb": 742.29248,
+      "mem_delta_mb": 0.0424959999999146
+    },
+    {
+      "layer_name": "bert.encoder.layer.7.attention.output.dense",
+      "flops": 18874368.0,
+      "latency_ms": 0.16340002184733748,
+      "mem_before_mb": 742.29248,
+      "mem_after_mb": 742.329344,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.7.attention.output.dropout",
+      "flops": 0.0,
+      "latency_ms": 0.08630001684650779,
+      "mem_before_mb": 742.329344,
+      "mem_after_mb": 742.329344,
+      "mem_delta_mb": 0.0
+    },
+    {
+      "layer_name": "bert.encoder.layer.7.attention.output.LayerNorm",
+      "flops": 46080.0,
+      "latency_ms": 0.11530000483617187,
+      "mem_before_mb": 742.366208,
+      "mem_after_mb": 742.403072,
+      "mem_delta_mb": 0.03686399999992318
+    },
+    {
+      "layer_name": "bert.encoder.layer.7.attention.output",
+      "flops": 2103296.0,
+      "latency_ms": 0.7040999480523169,
+      "mem_before_mb": 742.29248,
+      "mem_after_mb": 742.329344,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.7.attention",
+      "flops": 8400896.0,
+      "latency_ms": 2.7639000327326357,
+      "mem_before_mb": 742.249984,
+      "mem_after_mb": 742.29248,
+      "mem_delta_mb": 0.0424959999999146
+    },
+    {
+      "layer_name": "bert.encoder.layer.7.intermediate.dense",
+      "flops": 75497472.0,
+      "latency_ms": 0.1066999975591898,
+      "mem_before_mb": 742.29248,
+      "mem_after_mb": 742.439936,
+      "mem_delta_mb": 0.14745600000003378
+    },
+    {
+      "layer_name": "bert.encoder.layer.7.intermediate.intermediate_act_fn",
+      "flops": 0.0,
+      "latency_ms": 0.09619997581467032,
+      "mem_before_mb": 742.439936,
+      "mem_after_mb": 742.587392,
+      "mem_delta_mb": 0.14745600000003378
+    },
+    {
+      "layer_name": "bert.encoder.layer.7.intermediate",
+      "flops": 8396800.0,
+      "latency_ms": 0.4189999890513718,
+      "mem_before_mb": 742.29248,
+      "mem_after_mb": 742.439936,
+      "mem_delta_mb": 0.14745600000003378
+    },
+    {
+      "layer_name": "bert.encoder.layer.7.output.dense",
+      "flops": 75497472.0,
+      "latency_ms": 0.09899999713525176,
+      "mem_before_mb": 742.439936,
+      "mem_after_mb": 742.4768,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.7.output.dropout",
+      "flops": 0.0,
+      "latency_ms": 0.0771000050008297,
+      "mem_before_mb": 742.4768,
+      "mem_after_mb": 742.4768,
+      "mem_delta_mb": 0.0
+    },
+    {
+      "layer_name": "bert.encoder.layer.7.output.LayerNorm",
+      "flops": 46080.0,
+      "latency_ms": 0.10890001431107521,
+      "mem_before_mb": 742.513664,
+      "mem_after_mb": 742.550528,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.7.output",
+      "flops": 8394752.0,
+      "latency_ms": 0.5700999754481018,
+      "mem_before_mb": 742.439936,
+      "mem_after_mb": 742.4768,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.7",
+      "flops": 25192448.0,
+      "latency_ms": 4.048200033139437,
+      "mem_before_mb": 742.249984,
+      "mem_after_mb": 742.286848,
+      "mem_delta_mb": 0.03686399999992318
+    },
+    {
+      "layer_name": "bert.encoder.layer.8.attention.self.query",
+      "flops": 18874368.0,
+      "latency_ms": 0.1078000059351325,
+      "mem_before_mb": 742.249984,
+      "mem_after_mb": 742.286848,
+      "mem_delta_mb": 0.03686399999992318
+    },
+    {
+      "layer_name": "bert.encoder.layer.8.attention.self.key",
+      "flops": 18874368.0,
+      "latency_ms": 0.10950001887977123,
+      "mem_before_mb": 742.286848,
+      "mem_after_mb": 742.323712,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.8.attention.self.value",
+      "flops": 18874368.0,
+      "latency_ms": 0.3263999824412167,
+      "mem_before_mb": 742.323712,
+      "mem_after_mb": 742.360576,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.8.attention.self",
+      "flops": 6297600.0,
+      "latency_ms": 1.1008000001311302,
+      "mem_before_mb": 742.249984,
+      "mem_after_mb": 742.29248,
+      "mem_delta_mb": 0.0424959999999146
+    },
+    {
+      "layer_name": "bert.encoder.layer.8.attention.output.dense",
+      "flops": 18874368.0,
+      "latency_ms": 0.10629999451339245,
+      "mem_before_mb": 742.29248,
+      "mem_after_mb": 742.329344,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.8.attention.output.dropout",
+      "flops": 0.0,
+      "latency_ms": 0.06769999163225293,
+      "mem_before_mb": 742.329344,
+      "mem_after_mb": 742.329344,
+      "mem_delta_mb": 0.0
+    },
+    {
+      "layer_name": "bert.encoder.layer.8.attention.output.LayerNorm",
+      "flops": 46080.0,
+      "latency_ms": 0.10859995381906629,
+      "mem_before_mb": 742.366208,
+      "mem_after_mb": 742.403072,
+      "mem_delta_mb": 0.03686399999992318
+    },
+    {
+      "layer_name": "bert.encoder.layer.8.attention.output",
+      "flops": 2103296.0,
+      "latency_ms": 0.6044000037945807,
+      "mem_before_mb": 742.29248,
+      "mem_after_mb": 742.329344,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.8.attention",
+      "flops": 8400896.0,
+      "latency_ms": 1.9242000416852534,
+      "mem_before_mb": 742.249984,
+      "mem_after_mb": 742.29248,
+      "mem_delta_mb": 0.0424959999999146
+    },
+    {
+      "layer_name": "bert.encoder.layer.8.intermediate.dense",
+      "flops": 75497472.0,
+      "latency_ms": 0.10879995534196496,
+      "mem_before_mb": 742.29248,
+      "mem_after_mb": 742.439936,
+      "mem_delta_mb": 0.14745600000003378
+    },
+    {
+      "layer_name": "bert.encoder.layer.8.intermediate.intermediate_act_fn",
+      "flops": 0.0,
+      "latency_ms": 0.08239998714998364,
+      "mem_before_mb": 742.439936,
+      "mem_after_mb": 742.587392,
+      "mem_delta_mb": 0.14745600000003378
+    },
+    {
+      "layer_name": "bert.encoder.layer.8.intermediate",
+      "flops": 8396800.0,
+      "latency_ms": 0.430300016887486,
+      "mem_before_mb": 742.29248,
+      "mem_after_mb": 742.439936,
+      "mem_delta_mb": 0.14745600000003378
+    },
+    {
+      "layer_name": "bert.encoder.layer.8.output.dense",
+      "flops": 75497472.0,
+      "latency_ms": 0.10269996710121632,
+      "mem_before_mb": 742.439936,
+      "mem_after_mb": 742.4768,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.8.output.dropout",
+      "flops": 0.0,
+      "latency_ms": 0.08019997039809823,
+      "mem_before_mb": 742.4768,
+      "mem_after_mb": 742.4768,
+      "mem_delta_mb": 0.0
+    },
+    {
+      "layer_name": "bert.encoder.layer.8.output.LayerNorm",
+      "flops": 46080.0,
+      "latency_ms": 0.2049999893642962,
+      "mem_before_mb": 742.513664,
+      "mem_after_mb": 742.550528,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.8.output",
+      "flops": 8394752.0,
+      "latency_ms": 0.6785000441595912,
+      "mem_before_mb": 742.439936,
+      "mem_after_mb": 742.4768,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.8",
+      "flops": 25192448.0,
+      "latency_ms": 3.3217999734915793,
+      "mem_before_mb": 742.249984,
+      "mem_after_mb": 742.286848,
+      "mem_delta_mb": 0.03686399999992318
+    },
+    {
+      "layer_name": "bert.encoder.layer.9.attention.self.query",
+      "flops": 18874368.0,
+      "latency_ms": 0.11029996676370502,
+      "mem_before_mb": 742.249984,
+      "mem_after_mb": 742.286848,
+      "mem_delta_mb": 0.03686399999992318
+    },
+    {
+      "layer_name": "bert.encoder.layer.9.attention.self.key",
+      "flops": 18874368.0,
+      "latency_ms": 0.2136999974027276,
+      "mem_before_mb": 742.286848,
+      "mem_after_mb": 742.323712,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.9.attention.self.value",
+      "flops": 18874368.0,
+      "latency_ms": 0.13760000001639128,
+      "mem_before_mb": 742.323712,
+      "mem_after_mb": 742.360576,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.9.attention.self",
+      "flops": 6297600.0,
+      "latency_ms": 1.3210999895818532,
+      "mem_before_mb": 742.249984,
+      "mem_after_mb": 742.29248,
+      "mem_delta_mb": 0.0424959999999146
+    },
+    {
+      "layer_name": "bert.encoder.layer.9.attention.output.dense",
+      "flops": 18874368.0,
+      "latency_ms": 0.1058999914675951,
+      "mem_before_mb": 742.29248,
+      "mem_after_mb": 742.329344,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.9.attention.output.dropout",
+      "flops": 0.0,
+      "latency_ms": 0.06769999163225293,
+      "mem_before_mb": 742.329344,
+      "mem_after_mb": 742.329344,
+      "mem_delta_mb": 0.0
+    },
+    {
+      "layer_name": "bert.encoder.layer.9.attention.output.LayerNorm",
+      "flops": 46080.0,
+      "latency_ms": 0.12149999383836985,
+      "mem_before_mb": 742.366208,
+      "mem_after_mb": 742.403072,
+      "mem_delta_mb": 0.03686399999992318
+    },
+    {
+      "layer_name": "bert.encoder.layer.9.attention.output",
+      "flops": 2103296.0,
+      "latency_ms": 0.685799983330071,
+      "mem_before_mb": 742.29248,
+      "mem_after_mb": 742.329344,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.9.attention",
+      "flops": 8400896.0,
+      "latency_ms": 2.224800002295524,
+      "mem_before_mb": 742.249984,
+      "mem_after_mb": 742.29248,
+      "mem_delta_mb": 0.0424959999999146
+    },
+    {
+      "layer_name": "bert.encoder.layer.9.intermediate.dense",
+      "flops": 75497472.0,
+      "latency_ms": 0.11029996676370502,
+      "mem_before_mb": 742.29248,
+      "mem_after_mb": 742.439936,
+      "mem_delta_mb": 0.14745600000003378
+    },
+    {
+      "layer_name": "bert.encoder.layer.9.intermediate.intermediate_act_fn",
+      "flops": 0.0,
+      "latency_ms": 0.11239998275414109,
+      "mem_before_mb": 742.439936,
+      "mem_after_mb": 742.587392,
+      "mem_delta_mb": 0.14745600000003378
+    },
+    {
+      "layer_name": "bert.encoder.layer.9.intermediate",
+      "flops": 8396800.0,
+      "latency_ms": 0.4523000097833574,
+      "mem_before_mb": 742.29248,
+      "mem_after_mb": 742.439936,
+      "mem_delta_mb": 0.14745600000003378
+    },
+    {
+      "layer_name": "bert.encoder.layer.9.output.dense",
+      "flops": 75497472.0,
+      "latency_ms": 0.1018000184558332,
+      "mem_before_mb": 742.439936,
+      "mem_after_mb": 742.4768,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.9.output.dropout",
+      "flops": 0.0,
+      "latency_ms": 0.08780002826824784,
+      "mem_before_mb": 742.4768,
+      "mem_after_mb": 742.4768,
+      "mem_delta_mb": 0.0
+    },
+    {
+      "layer_name": "bert.encoder.layer.9.output.LayerNorm",
+      "flops": 46080.0,
+      "latency_ms": 0.11889997404068708,
+      "mem_before_mb": 742.513664,
+      "mem_after_mb": 742.550528,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.9.output",
+      "flops": 8394752.0,
+      "latency_ms": 0.6062000175006688,
+      "mem_before_mb": 742.439936,
+      "mem_after_mb": 742.4768,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.9",
+      "flops": 25192448.0,
+      "latency_ms": 3.577199997380376,
+      "mem_before_mb": 742.249984,
+      "mem_after_mb": 742.286848,
+      "mem_delta_mb": 0.03686399999992318
+    },
+    {
+      "layer_name": "bert.encoder.layer.10.attention.self.query",
+      "flops": 18874368.0,
+      "latency_ms": 0.10750000365078449,
+      "mem_before_mb": 742.249984,
+      "mem_after_mb": 742.286848,
+      "mem_delta_mb": 0.03686399999992318
+    },
+    {
+      "layer_name": "bert.encoder.layer.10.attention.self.key",
+      "flops": 18874368.0,
+      "latency_ms": 0.1047999830916524,
+      "mem_before_mb": 742.286848,
+      "mem_after_mb": 742.323712,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.10.attention.self.value",
+      "flops": 18874368.0,
+      "latency_ms": 0.10619999375194311,
+      "mem_before_mb": 742.323712,
+      "mem_after_mb": 742.360576,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.10.attention.self",
+      "flops": 6297600.0,
+      "latency_ms": 1.1576000251807272,
+      "mem_before_mb": 742.249984,
+      "mem_after_mb": 742.29248,
+      "mem_delta_mb": 0.0424959999999146
+    },
+    {
+      "layer_name": "bert.encoder.layer.10.attention.output.dense",
+      "flops": 18874368.0,
+      "latency_ms": 0.10810000821948051,
+      "mem_before_mb": 742.29248,
+      "mem_after_mb": 742.329344,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.10.attention.output.dropout",
+      "flops": 0.0,
+      "latency_ms": 0.0638000201433897,
+      "mem_before_mb": 742.329344,
+      "mem_after_mb": 742.329344,
+      "mem_delta_mb": 0.0
+    },
+    {
+      "layer_name": "bert.encoder.layer.10.attention.output.LayerNorm",
+      "flops": 46080.0,
+      "latency_ms": 0.11589995119720697,
+      "mem_before_mb": 742.366208,
+      "mem_after_mb": 742.403072,
+      "mem_delta_mb": 0.03686399999992318
+    },
+    {
+      "layer_name": "bert.encoder.layer.10.attention.output",
+      "flops": 2103296.0,
+      "latency_ms": 0.6209999555721879,
+      "mem_before_mb": 742.29248,
+      "mem_after_mb": 742.329344,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.10.attention",
+      "flops": 8400896.0,
+      "latency_ms": 2.068099973257631,
+      "mem_before_mb": 742.249984,
+      "mem_after_mb": 742.29248,
+      "mem_delta_mb": 0.0424959999999146
+    },
+    {
+      "layer_name": "bert.encoder.layer.10.intermediate.dense",
+      "flops": 75497472.0,
+      "latency_ms": 0.12919999426230788,
+      "mem_before_mb": 742.29248,
+      "mem_after_mb": 742.439936,
+      "mem_delta_mb": 0.14745600000003378
+    },
+    {
+      "layer_name": "bert.encoder.layer.10.intermediate.intermediate_act_fn",
+      "flops": 0.0,
+      "latency_ms": 0.1078000059351325,
+      "mem_before_mb": 742.439936,
+      "mem_after_mb": 742.587392,
+      "mem_delta_mb": 0.14745600000003378
+    },
+    {
+      "layer_name": "bert.encoder.layer.10.intermediate",
+      "flops": 8396800.0,
+      "latency_ms": 0.4759000148624182,
+      "mem_before_mb": 742.29248,
+      "mem_after_mb": 742.439936,
+      "mem_delta_mb": 0.14745600000003378
+    },
+    {
+      "layer_name": "bert.encoder.layer.10.output.dense",
+      "flops": 75497472.0,
+      "latency_ms": 0.10260002454742789,
+      "mem_before_mb": 742.439936,
+      "mem_after_mb": 742.4768,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.10.output.dropout",
+      "flops": 0.0,
+      "latency_ms": 0.08849997539073229,
+      "mem_before_mb": 742.4768,
+      "mem_after_mb": 742.4768,
+      "mem_delta_mb": 0.0
+    },
+    {
+      "layer_name": "bert.encoder.layer.10.output.LayerNorm",
+      "flops": 46080.0,
+      "latency_ms": 0.11870003072544932,
+      "mem_before_mb": 742.513664,
+      "mem_after_mb": 742.550528,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.10.output",
+      "flops": 8394752.0,
+      "latency_ms": 0.6176999886520207,
+      "mem_before_mb": 742.439936,
+      "mem_after_mb": 742.4768,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.10",
+      "flops": 25192448.0,
+      "latency_ms": 3.4645000123418868,
+      "mem_before_mb": 742.249984,
+      "mem_after_mb": 742.286848,
+      "mem_delta_mb": 0.03686399999992318
+    },
+    {
+      "layer_name": "bert.encoder.layer.11.attention.self.query",
+      "flops": 18874368.0,
+      "latency_ms": 0.1048000412993133,
+      "mem_before_mb": 742.249984,
+      "mem_after_mb": 742.286848,
+      "mem_delta_mb": 0.03686399999992318
+    },
+    {
+      "layer_name": "bert.encoder.layer.11.attention.self.key",
+      "flops": 18874368.0,
+      "latency_ms": 0.10950001887977123,
+      "mem_before_mb": 742.286848,
+      "mem_after_mb": 742.323712,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.11.attention.self.value",
+      "flops": 18874368.0,
+      "latency_ms": 0.10930001735687256,
+      "mem_before_mb": 742.323712,
+      "mem_after_mb": 742.360576,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.11.attention.self",
+      "flops": 6297600.0,
+      "latency_ms": 0.9408000041730702,
+      "mem_before_mb": 742.249984,
+      "mem_after_mb": 742.29248,
+      "mem_delta_mb": 0.0424959999999146
+    },
+    {
+      "layer_name": "bert.encoder.layer.11.attention.output.dense",
+      "flops": 18874368.0,
+      "latency_ms": 0.10459998156875372,
+      "mem_before_mb": 742.29248,
+      "mem_after_mb": 742.329344,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.11.attention.output.dropout",
+      "flops": 0.0,
+      "latency_ms": 0.06630003917962313,
+      "mem_before_mb": 742.329344,
+      "mem_after_mb": 742.329344,
+      "mem_delta_mb": 0.0
+    },
+    {
+      "layer_name": "bert.encoder.layer.11.attention.output.LayerNorm",
+      "flops": 46080.0,
+      "latency_ms": 0.13280002167448401,
+      "mem_before_mb": 742.366208,
+      "mem_after_mb": 742.403072,
+      "mem_delta_mb": 0.03686399999992318
+    },
+    {
+      "layer_name": "bert.encoder.layer.11.attention.output",
+      "flops": 2103296.0,
+      "latency_ms": 0.6459999713115394,
+      "mem_before_mb": 742.29248,
+      "mem_after_mb": 742.329344,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.11.attention",
+      "flops": 8400896.0,
+      "latency_ms": 1.799600024241954,
+      "mem_before_mb": 742.249984,
+      "mem_after_mb": 742.29248,
+      "mem_delta_mb": 0.0424959999999146
+    },
+    {
+      "layer_name": "bert.encoder.layer.11.intermediate.dense",
+      "flops": 75497472.0,
+      "latency_ms": 0.10750000365078449,
+      "mem_before_mb": 742.29248,
+      "mem_after_mb": 742.439936,
+      "mem_delta_mb": 0.14745600000003378
+    },
+    {
+      "layer_name": "bert.encoder.layer.11.intermediate.intermediate_act_fn",
+      "flops": 0.0,
+      "latency_ms": 0.1066999975591898,
+      "mem_before_mb": 742.439936,
+      "mem_after_mb": 742.587392,
+      "mem_delta_mb": 0.14745600000003378
+    },
+    {
+      "layer_name": "bert.encoder.layer.11.intermediate",
+      "flops": 8396800.0,
+      "latency_ms": 0.437700015027076,
+      "mem_before_mb": 742.29248,
+      "mem_after_mb": 742.439936,
+      "mem_delta_mb": 0.14745600000003378
+    },
+    {
+      "layer_name": "bert.encoder.layer.11.output.dense",
+      "flops": 75497472.0,
+      "latency_ms": 0.20900001982226968,
+      "mem_before_mb": 742.439936,
+      "mem_after_mb": 742.4768,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.11.output.dropout",
+      "flops": 0.0,
+      "latency_ms": 0.09110005339607596,
+      "mem_before_mb": 742.4768,
+      "mem_after_mb": 742.4768,
+      "mem_delta_mb": 0.0
+    },
+    {
+      "layer_name": "bert.encoder.layer.11.output.LayerNorm",
+      "flops": 46080.0,
+      "latency_ms": 0.11680001625791192,
+      "mem_before_mb": 742.513664,
+      "mem_after_mb": 742.550528,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.11.output",
+      "flops": 8394752.0,
+      "latency_ms": 0.9624999947845936,
+      "mem_before_mb": 742.439936,
+      "mem_after_mb": 742.4768,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert.encoder.layer.11",
+      "flops": 25192448.0,
+      "latency_ms": 3.4893000265583396,
+      "mem_before_mb": 742.249984,
+      "mem_after_mb": 742.286848,
+      "mem_delta_mb": 0.03686399999992318
+    },
+    {
+      "layer_name": "bert.encoder",
+      "flops": 302309376.0,
+      "latency_ms": 42.86119999596849,
+      "mem_before_mb": 742.21312,
+      "mem_after_mb": 742.249984,
+      "mem_delta_mb": 0.03686400000003687
+    },
+    {
+      "layer_name": "bert",
+      "flops": 365875200.0,
+      "latency_ms": 45.1189000159502,
+      "mem_before_mb": 742.175744,
+      "mem_after_mb": 742.212608,
+      "mem_delta_mb": 0.03686400000003687
+    }
+  ]
+}
