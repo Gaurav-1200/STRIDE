@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package distributed_inference;
+
+message TensorPayload {
+  string dtype = 1;
+  repeated int64 shape = 2;
+  bytes data = 3;
+}
+
+message ForwardRequest {
+  string request_id = 1;
+  int32 step = 2;
+  bool is_prefill = 3;
+  bool return_logits = 4;
+  TensorPayload hidden_states = 5;
+  TensorPayload attention_mask = 6;
+}
+
+message ForwardResponse {
+  string request_id = 1;
+  int32 step = 2;
+  TensorPayload hidden_states = 3;
+  TensorPayload logits = 4;
+}
+
+message HealthRequest {}
+
+message HealthResponse {
+  string status = 1;
+  string worker_name = 2;
+  repeated int32 layer_indices = 3;
+}
+
+service PartitionWorker {
+  rpc Forward(ForwardRequest) returns (ForwardResponse);
+  rpc Health(HealthRequest) returns (HealthResponse);
+}

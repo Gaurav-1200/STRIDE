@@ -1,0 +1,16 @@
+model_id: Qwen/Qwen2.5-0.5B-Instruct
+dtype: float16
+max_new_tokens: 64
+workers:
+  - name: node0
+    host: 10.228.24.83
+    port: 50051
+    partition_dir: E:/models/qwen2_5_0.5b/partition_0
+  - name: node1
+    host: 10.228.24.83
+    port: 50052
+    partition_dir: E:/models/qwen2_5_0.5b/partition_1
+  - name: node2
+    host: 10.228.24.83
+    port: 50053
+    partition_dir: E:/models/qwen2_5_0.5b/partition_2

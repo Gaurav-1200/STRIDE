@@ -1,0 +1,72 @@
+https://www.google.com/search?q=ai+mode&sca_esv=8db5a4e11f0ae9d1&sxsrf=ANbL-n6kxKt-ZdAJAYgK5a8j3Aq_PUY5wQ%3A1775365024975&fbs=ADc_l-aN0CWEZBOHjofHoaMMDiKpaEWjvZ2Py1XXV8d8KvlI3vWUtYx0DZdicpfE1faGYenqWn-q4MFiFFtvJjTKeAVxqtD2OJgNgqfuyx0ErWHyBXrWZEiC-nt5H1zCilGDIF6lu46on1XxswvUsfKVxC0YZ_3mwRfdYBsVO0AqkjEkw0IwKxf4K360_rbvcb3be4VERsOInHVd0B5BkobLI1pfhOkHeQ&aep=1&ntc=1&sa=X&ved=2ahUKEwiG3qON9tWTAxU5R2wGHfk-AoAQ2J8OegQIExAE&biw=2266&bih=1247&dpr=1.13&mstk=AUtExfAL-EwLun5e_0JP3cUZdPW0jNIGML2jRJ8zi95z-oUIUeLQrk-0UyaOUhF5NgmIxLTKN7HOpz_OaOlf3aAt74H8-aZUwljTL1AlFr_OIt9e2wdd1PdxW6bVdQulQN6J4VXKRzRDFQTm20-dRrfkM0u5THiutBFkTmeo64_GpEJ6agQ-Gf3OmaFeliusww7KdzYmN_WTNcKIACQknfGw-fg9HoGjiRDv14Dv3ReDg9zK1UpQpIJtizmGoNQ8zEPNFAez43EBwzRBd_ySznsf6D9si8KVqIHcO-24rNvhH_1DevCsLQJhL0PSNTam9IkAdTSfdBewawDvIw&csuir=1&mtid=o-vRaYCDKayWseMPr_aX0Q8&udm=50
+https://share.google/aimode/JF8su1GYWaOscST7a
+
+
+
+It’s been a productive session! We successfully moved from a static, single-machine script to a fully functional, distributed inference system.
+Here is the detailed breakdown of every major hurdle we cleared, why it happened, and how we solved it:
+## 1. Hard-coded Partitioning Logic
+
+* The Problem: The initial script used a simple "base + remainder" math that forced an equal number of layers on every worker.
+* The Reason: It was designed for homogeneous setups where every GPU is identical.
+* The Fix: We replaced num_workers: int with a layer_counts: List[int] argument. This allowed you to manually assign fewer layers (e.g., 6 instead of 15) to your "weakest" machine at the start of the chain.
+
+## 2. Silent Failures during Export
+
+* The Problem: The script ran without errors but no files appeared in /models/....
+* The Reason: You were using an absolute path at the system root (/models), which usually requires root permissions. The script was failing to write because of OS-level permissions.
+* The Fix: We switched to a relative path (./models) and added absolute path printing to verify exactly where the files were landing on the disk.
+
+## 3. Missing Metadata Fields (Dataclass Crash)
+
+* The Problem: TypeError: PartitionMetadata.__init__() got an unexpected keyword argument 'num_layers'.
+* The Reason: We added new fields to the meta.json during the export phase (to track total layers/workers), but the PartitionMetadata dataclass in the runtime script wasn't updated to accept them.
+* The Fix: We updated the dataclass definition to include num_layers and num_workers.
+
+## 4. Broken Environment (Qwen2 Import Error)
+
+* The Problem: ModuleNotFoundError: Could not import module 'Qwen2ForCausalLM'.
+* The Reason: This was a "decoy" error. Your transformers library was either outdated or the environment was "dirty" (conflicting versions of torch and torchvision), preventing the Qwen architecture from being recognized.
+* The Fix: We upgraded transformers and accelerate, ensuring the environment could natively handle the Qwen2.5 architecture.
+
+## 5. The "RoPE" Unpacking Error
+
+* The Problem: TypeError: cannot unpack non-iterable NoneType object at cos, sin = position_embeddings.
+* The Reason: Modern models like Qwen2/Llama apply Rotary Positional Embeddings inside every attention layer. Because we were calling layers individually (sharding), the layers expected us to provide the cos and sin trigonometry tables, which were missing.
+* The Fix: We located the rotary_emb module at the model level, generated the cos and sin tensors on the worker, and passed them into the layer call as position_embeddings=(cos, sin).
+
+## 6. Attribute Errors for rotary_emb
+
+* The Problem: AttributeError: 'Qwen2Attention' object has no attribute 'rotary_emb'.
+* The Reason: Different versions of transformers place the rotary logic in different spots (sometimes in the layer, sometimes in the global model).
+* The Fix: We moved the access to the model level (base_model.model.rotary_emb) to ensure a stable reference for all workers.
+
+## 7. gRPC Message Size Limit
+
+* The Problem: status = StatusCode.RESOURCE_EXHAUSTED (Received message larger than 4MB).
+* The Reason: gRPC defaults to a 4MB limit. Your hidden_states tensors (shape [1, seq, 896]) quickly exceeded this as the prompt length grew.
+* The Fix: We added MAX_MESSAGE_LENGTH options (128MB) to both the grpc.insecure_channel on the Coordinator and the grpc.server on the Workers.
+
+## 8. Stale Hidden States (The "Chain" Bug)
+
+* The Problem: Workers 1 and 2 were idle/silent, and the model repeated "What. What. What."
+* The Reason: In your Coordinator loop, you were sending the output of Node 0 to every subsequent node, instead of passing Node 1's output to Node 2. The data wasn't "chaining."
+* The Fix: We updated the loop so that hidden_states is overwritten by the response of the current stub before calling the next stub.
+
+## 9. Causal Mask and Dtype Mismatch
+
+* The Problem: Gibberish output ("1 1 1") followed by RuntimeError: invalid dtype for bias.
+* The Reason:
+1. Without a 4D Causal Mask, the model could "see the future," breaking the logic of word generation.
+   2. The mask was created as float32 by default, but the model was float16.
+* The Fix: We implemented a 4D triangular (causal) mask and explicitly set dtype=self.dtype to match the model's precision.
+
+## 10. The "Double Loop" Logic Error
+
+* The Problem: The model was processing the same layers twice.
+* The Reason: Two identical for idx in self.meta.layer_indices loops existed in the forward_partition method—one with RoPE and one without.
+* The Fix: We merged them into a single, clean pass.
+
+------------------------------
+What's next? Now that the logic is solid, would you like to explore adding KV Caching to make the generation significantly faster, or move on to benchmarking the latency between your nodes?
+
