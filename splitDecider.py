@@ -3,9 +3,9 @@ import math
 import numpy as np
 
 class PowerState(Enum):
-    INUSE: 0
-    IDLE: 1
-    CHARGING: 0.2
+    INUSE = 0
+    IDLE = 1
+    CHARGING = 2
 
 class TheSplit:
     def __init__(self, baseData, gpuReward = 0.5, flopReward = 0.5, rewardState = [-0.2, 0, 0.2], rewardBattery = [-0.2, 0, 0.2], rewardWiFi = [-0.2, 0.2]):
@@ -22,6 +22,7 @@ class TheSplit:
         for idx, availBattery in enumerate([0.1, 0.5]):
             if battery < availBattery:
                 batteryReward = self.rewardBattery[idx]
+                break
         else:
             batteryReward = self.rewardBattery[-1]
         WiFiReward = self.rewardWiFi[isWiFi]
@@ -103,7 +104,7 @@ class TheSplit:
             else:
                 maxMemory = exeMat[layerIdx][currDevice].gpuMemory
             if maxMemory > deviceData[currDevice].gpuMemory:
-                return [], -1
+                return [], float('-inf')
             prevDevice = currDevice
 
         return theSplit, bestScore
@@ -118,7 +119,7 @@ class TheSplit:
         for iter in range(iters):
             mid = (lambdaMin + lambdaMax) / 2.0
             currentSplit, currentScore = self.doTheSplit(timeMS, layerData, commMat, exeMat, deviceData, mid)
-            if currentScore == -1:
+            if currentScore == float('-inf'):
                 lambdaMin = mid
             else:
                 bestSplit = currentSplit
