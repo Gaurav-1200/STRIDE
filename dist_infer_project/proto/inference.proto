@@ -35,4 +35,6 @@ message HealthResponse {
 service PartitionWorker {
   rpc Forward(ForwardRequest) returns (ForwardResponse);
   rpc Health(HealthRequest) returns (HealthResponse);
+  rpc ProfileDevice(DeviceProfileRequest) returns (DeviceProfileResponse); 
+  rpc Ping(PingRequest) returns (PingResponse); 
 }
