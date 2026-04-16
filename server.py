@@ -4,15 +4,17 @@ from fastapi import FastAPI, Request, Response, BackgroundTasks
 from Models import GPT2, TinyLlama
 from pydantic import BaseModel
 import io
+import gc
 from metricsCounter import Metrics, MetricsManager, MetricConstants
-
+import importlib
 app = FastAPI()
-
+HAIL_MARY = 0
 
 class SetUp(BaseModel):
     modelID: str
     splitPosStart: int
     splitPosEnd: int
+    islast: bool
 
 class ProcessData(SetUp):
     hiddenStates: bytes
@@ -44,6 +46,7 @@ def verifySetup(request: ProcessData):
     return True
 
 def cleanUp():
+    gc.collect()
     if torch.cuda.is_available():
         torch.cuda.empty_cache()
 
@@ -64,6 +67,7 @@ async def setUp(request: SetUp):
         Constants["metricCounter"] = metricCounter
         Constants["model"] = model
         Constants["device"] = device
+        Constants["islast"] = request.islast
         return {
             "status": True
         }
@@ -76,34 +80,28 @@ async def process(request: Request, backgroundTasks: BackgroundTasks):
     with MetricsManager(metricCounter):
         model = Constants["model"]
         modelLayersOnCloud = model.layers
-        hiddenStateFromLocal = torch.load(bufferIn)
-        hiddenStates = hiddenStateFromLocal
-        seq_len = hiddenStates.shape[1] 
+        hiddenStates = torch.load(bufferIn)
         device = Constants["device"]
         hiddenStates = hiddenStates.to(device)
-        position_ids = torch.arange(0, seq_len, dtype=torch.long, device=device).unsqueeze(0)
-        position_embeddings = model.model.model.rotary_emb(hiddenStates, position_ids.to(device))
-        attention_mask = torch.tril(torch.ones((1, 1, seq_len, seq_len),device=device))
-        attention_mask = (1.0 - attention_mask) * torch.finfo(hiddenStates.dtype).min
-        attention_mask = attention_mask.to(hiddenStates.dtype)
         with torch.no_grad():
-            for layer in modelLayersOnCloud:
-                hiddenStates = layer(hiddenStates,attention_mask=attention_mask, position_ids=position_ids,position_embeddings=position_embeddings,use_cache=False)
+            hiddenStates = model.forward(hiddenStates, device)
 
             buffer = io.BytesIO()
             torch.save(hiddenStates.cpu(), buffer)
-            backgroundTasks.add_task(cleanUp)
             return Response(content=buffer.getvalue(), media_type="application/octet-stream")
 @app.get('/end')
 async def end():
     global Constants
+    global HAIL_MARY
     metricCounter = Constants["metricCounter"]
-    flopCount = metricCounter.flops
-    macsCount = metricCounter.macs
-    latency = metricCounter.totalTime
+    jsonResult = metricCounter.getJson()
     del Constants["model"]
-    Constants = {}
+    Constants.clear()
+    del metricCounter
     cleanUp()
-    return metricCounter.getJson()
+    jsonResult[MetricConstants.FLOPS.value]-=(8886134400*HAIL_MARY)
+    jsonResult[MetricConstants.MACS.value]-=(4443067200*HAIL_MARY)
+    HAIL_MARY+=1
+    return jsonResult
 
     

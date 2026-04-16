@@ -65,7 +65,7 @@ class TinyLlama(Model):
                 config=self.config,
                 device=self.device,
             )
-    
+
     def loadModel(self, isFirst, isLast, startPos, endPos):
         self.model.model.layers = nn.ModuleList(self.model.model.layers[startPos:endPos])
         self.layers = self.model.model.layers
@@ -87,8 +87,21 @@ class TinyLlama(Model):
         self.model.eval()
 
 
-    def forward(self):
-        pass
+    def forward(self, hiddenStates, device):
+        seq_length = hiddenStates.shape[1]
+        position_ids = torch.arange(0, seq_length, dtype=torch.long).unsqueeze(0)
+        rotary_module = self.model.model.rotary_emb
+        position_embeddings = rotary_module(hiddenStates, position_ids.to(device))
+        attention_mask = torch.tril(torch.ones((1, 1, seq_length, seq_length),device=device))
+        attention_mask = (1.0 - attention_mask) * torch.finfo(hiddenStates.dtype).min
+        attention_mask = attention_mask.to(hiddenStates.dtype)
+        for layer in self.layers:
+            hiddenStates = layer(hiddenStates,
+                            attention_mask=attention_mask, 
+                            position_ids=position_ids,
+                            position_embeddings=position_embeddings,
+                            use_cache=False)
+        return hiddenStates
     
     def getFinalHiddenStates(self, hiddenStates):
         return self.model.model.norm(hiddenStates)

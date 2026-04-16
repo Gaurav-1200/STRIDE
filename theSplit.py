@@ -5,7 +5,7 @@ import io
 import gc
 import json
 import argparse
-import time
+import random
 
 from metricsCounter import Metrics, MetricsManager
 
@@ -15,6 +15,8 @@ device = "cuda:0" if torch.cuda.is_available() else "cpu"
 def getLayerSplit(numOfLayers, numOfHosts):
     start = 0
     splits = []
+    # for i in range(numOfLayers):
+    #     splits.append(random.randint(0,numOfHosts))
     incement = numOfLayers//numOfHosts
     for i in range(numOfHosts):
         endPos = start + incement
@@ -31,12 +33,13 @@ class OtherPlace:
         self.initializeDevice()
         self.memoryTracker = MemoryTracker()
 
-    def initializeDevice(self):
+    def initializeDevice(self, islast = False):
         url = f"{self.baseURL}/setup"
         data = {
             "modelID": self.modelID,
             "splitPosStart": self.splitPosStart,
-            "splitPosEnd": self.splitPosEnd
+            "splitPosEnd": self.splitPosEnd,
+            "islast": islast
         }
         result = requests.post(url, json=data)
         if not result.json()["status"]:
@@ -108,18 +111,7 @@ def run(prompt, hosts, metricPath):
             while step<maxToken and inputIDs[0][-1].item()!=eos:
                 step+=1
                 hiddenStates = model.getInitialHiddenState(inputIDs)
-                seq_length = inputIDs.shape[1]
-                position_ids = torch.arange(0, seq_length, dtype=torch.long).unsqueeze(0)
-                rotary_module = model.model.model.rotary_emb
-                position_embeddings = rotary_module(hiddenStates, position_ids.to(device))
-                attention_mask = torch.tril(torch.ones((1, 1, seq_length, seq_length),device=device))
-                attention_mask = (1.0 - attention_mask) * torch.finfo(hiddenStates.dtype).min
-                attention_mask = attention_mask.to(hiddenStates.dtype)
-                for layer in model.layers:
-                    outputs = layer(hiddenStates,attention_mask=attention_mask,
-                position_ids=position_ids,position_embeddings=position_embeddings,
-                use_cache=False)
-                    hiddenStates = outputs
+                hiddenStates = model.forward(hiddenStates, device)
                 if cloud!=None:
                     hiddenStates = cloud.process(hiddenStates)
                 hiddenStates = model.getFinalHiddenStates(hiddenStates)
@@ -131,7 +123,7 @@ def run(prompt, hosts, metricPath):
             cloudUsage = cloud.getServerUsage()
         output = model.tokenizer.decode(inputIDs[0])
     allMetrics = [localUsage.getJson(), cloudUsage]
-    allMetrics = [metric for metric in allMetrics if metric!=None]
+    allMetrics = [metric for metric in allMetrics if metric is not None]
     Metrics.saveUsageDict(*allMetrics, metricPath=metricPath)
     return output
 
@@ -144,6 +136,6 @@ if __name__=="__main__":
     parser.add_argument('--metricPath', type=str, default="Metrics.json")
     parsedValues = parser.parse_args()
     output = run(parsedValues.prompt, parsedValues.hosts, parsedValues.metricPath)
-    print(output)
+    # print(output)
     gc.collect()
     torch.cuda.empty_cache()

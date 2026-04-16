@@ -1,22 +1,23 @@
 from enum import Enum
 import math
 import numpy as np
-
+import pandas as pd
+ 
 class PowerState(Enum):
     INUSE = 0
     IDLE = 1
     CHARGING = 2
-
-class TheSplit:
-    def __init__(self, baseData, gpuReward = 0.5, flopReward = 0.5, rewardState = [-0.2, 0, 0.2], rewardBattery = [-0.2, 0, 0.2], rewardWiFi = [-0.2, 0.2]):
+ 
+class TheDecider:
+    def __init__(self, baseData, gpuReward = 0.5, flopReward = 0.5, rewardState = [-0.2, 0, 0.2], rewardBattery = [-0.2, 0, 0.2], rewardWiFi = [0, 0]):
         self.baseData = baseData
         self.rewardState = rewardState # In-Use, Idle, Charging
         self.rewardBattery = rewardBattery # < 20, < 50, >70
-        self.rewardWiFi = rewardWiFi # On 5G, On WiFi
+        self.rewardWiFi = rewardWiFi # On 5G, On WiFi 
         self.timeStep = 1
         self.gpuReward = gpuReward
         self.flopsReward = flopReward
-
+ 
     def getScore(self, flops, gpuMemory, state, battery, isWiFi):
         stateReward = self.rewardState[state.value]
         for idx, availBattery in enumerate([0.1, 0.5]):
@@ -26,8 +27,9 @@ class TheSplit:
         else:
             batteryReward = self.rewardBattery[-1]
         WiFiReward = self.rewardWiFi[isWiFi]
-        return (self.flopsReward*(flops/self.baseData.flops) + self.gpuReward*(gpuMemory/self.baseData.gpuMemory))*(1 + stateReward + batteryReward + WiFiReward)
-    
+        reward = (self.flopsReward*(flops/self.baseData.flops) + self.gpuReward*(gpuMemory/self.baseData.gpuMemory))*(1 + stateReward + batteryReward + WiFiReward)
+        return reward
+   
     def doTheSplit(self, timeMS, layerData, commMat, exeMat, deviceData, lambda_mem):
         """
         Args:
@@ -47,55 +49,60 @@ class TheSplit:
                     currScore-=gpuMemoryPenaly
                 else:
                     currScore = 0.0
-
+ 
                 exeTime = exeMat[layerIdx][deviceIdx].time
                 exeSteps = math.ceil(exeTime/self.timeStep)
-
                 if layerIdx == 0:
                     for t in range(exeSteps, stepCount):
                         DP[deviceIdx][layerIdx][t] = currScore
+                        maxScore = currScore
+                        bestPrevDev = -1
                 else:
                     for prevDev in range(deviceCount):
                         # assuming no tensor size changes per layer
                         commTime = commMat[prevDev][deviceIdx]
                         commSteps = math.ceil(commTime/self.timeStep)
                         totalSteps = exeSteps + commSteps
-
+ 
                         for t in range(totalSteps, stepCount):
                             prevT = t - totalSteps
                             score = DP[prevDev][layerIdx-1][prevT] + currScore
                             if score > DP[deviceIdx][layerIdx][t]:
+                                maxScore = score
                                 DP[deviceIdx][layerIdx][t] = score
                                 pathToGlory[deviceIdx][layerIdx][t] = prevDev
+                                bestPrevDev = prevDev
+                # print(layerIdx, deviceIdx, currScore, maxScore, bestPrevDev)
         bestDevice = -1
         bestScore = float('-inf')
-
+ 
         for d in range(deviceCount):
+            # print(d, DP[d][-1][-1], DP.shape)
             if DP[d][-1][-1] > bestScore:
                 bestScore = DP[d][-1][-1]
                 bestDevice = d
         if bestScore == float('-inf'):
             return [], bestScore
-        
+       
         theSplit = []
         currDevice = bestDevice
         currTime = stepCount - 1
         for layerIdx in range(layerCount-1,0,-1):
             theSplit.append(currDevice)
             prevDevice = pathToGlory[currDevice][layerIdx][currTime]
-
-
+ 
+ 
             execSteps = math.ceil(exeMat[layerIdx][currDevice].time/self.timeStep)
             commSteps = math.ceil(commMat[prevDevice][currDevice]/self.timeStep)
-
+ 
             currTime = currTime - execSteps - commSteps
-
+ 
             currDevice = prevDevice
-
+ 
         theSplit.append(currDevice)
         theSplit.reverse()
-
-
+ 
+ 
         maxMemory = 0
         prevDevice = -1
         for layerIdx, currDevice in enumerate(theSplit):
@@ -106,10 +113,10 @@ class TheSplit:
             if maxMemory > deviceData[currDevice].gpuMemory:
                 return [], float('-inf')
             prevDevice = currDevice
-
+ 
         return theSplit, bestScore
-    
-
+   
+ 
     def splitWithBinarySearch(self, timeMS, layerData, commMat, exeMat, deviceData, delta = 1e-3, iters=50):
         lambdaMin = 0.0
         lambdaMax = 100.0
@@ -126,14 +133,9 @@ class TheSplit:
                 bestScore = currentScore
                 optimalLambda = mid
                 lambdaMax = mid
-            
+           
             if lambdaMax - lambdaMin < delta:
                 break
         if bestSplit is None:
             return [], float('-inf')
-        return bestSplit, bestScore  
-
-
-
-
-
+        return bestSplit, bestScore, mid  
